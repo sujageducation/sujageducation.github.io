@@ -7,7 +7,7 @@
 body.exam { background: var(--bg); min-height: 100vh; }
 .exam-header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
 .exam-header-inner { display: flex; align-items: center; gap: 16px; min-height: 64px; padding-block: 8px; }
-.exam-header .brand img { width: 34px; height: 34px; }
+.exam-header .brand img { width: auto; height: 38px; }
 .exam-title { flex: 1; min-width: 0; line-height: 1.25; }
 .exam-title strong { display: block; font-size: 0.98rem; color: var(--primary-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exam-title span { font-size: 0.8rem; color: var(--muted); }

@@ -73,10 +73,11 @@
       '<div class="book-foot"><span class="price">' + esc(price(b)) + '</span><a class="btn btn-primary btn-sm" href="' + url + '">View Book</a></div></div></article>';
   }
 
-  function categoryCard(c) {
+  var TONES = ["green", "navy", "orange"];
+  function categoryCard(c, i) {
     var n = testsIn(c.id).length;
     return '<a class="card is-link cat-card" href="test-category.html?cat=' + encodeURIComponent(c.id) + '">' +
-      '<span class="card-icon">' + icon(c.icon || "book", 22) + "</span>" +
+      '<span class="card-icon tone-' + TONES[(i || 0) % 3] + '">' + icon(c.icon || "book", 22) + "</span>" +
       "<h3>" + esc(c.name) + "</h3><p>" + esc(c.description || "") + "</p>" +
       '<span class="meta"><span>' + plural(n, "test") + "</span>" + icon("arrow-right", 18) + "</span></a>";
   }

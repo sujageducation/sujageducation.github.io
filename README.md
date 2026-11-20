@@ -6,9 +6,9 @@ It exists so the site can be uploaded from a phone, where GitHub's upload screen
 ## Uploading to GitHub from a phone
 
 1. Unzip the download so you can see all the files (about 60).
-2. In your repository open *Add file > Upload files*, tap the upload area and **select all files** (in the file picker choose "Select all"). Upload them in one go; if the picker limits you, do it in 2 or 3 batches.
+2. In your repository open *Add file > Upload files*, tap the upload area and **select all files**. Upload them in one go; if the picker limits you, do it in 2 or 3 batches.
 3. Commit the changes, then open *Settings > Pages*, choose the `main` branch and `/ (root)`.
-4. Wait a minute, then reload your site. The page should now be fully styled with the menu and cards.
+4. Wait a minute, then reload your site. The page should now be fully styled with the menu, cards and scrolling updates.
 
 If the page appears as plain unstyled text, some files did not upload. Check that `style.css`, `main.js` and `data-tests.js` are listed in the repository root.
 
@@ -34,7 +34,7 @@ python3 -m http.server 8000
 
 **Publish on GitHub Pages**
 
-1. Create a GitHub repository and upload every file in this folder (the files must be at the repository root).
+1. Create a GitHub repository and upload everything in this folder (the files must be at the repository root).
 2. Go to *Settings > Pages*, choose *Deploy from a branch*, select `main` and `/ (root)`, then save.
 3. After a minute the site is live at `https://<username>.github.io/<repository>/`.
 
@@ -71,15 +71,15 @@ style.css, responsive.css, test.css           styles
 main.js cards.js tests.js test-engine.js
 results.js notes.js books.js search.js
 home.js contact.js                            scripts
-data-site.js data-tests.js
-data-notes.js data-books.js                   editable content and settings
-logo.svg favicon.svg favicon.ico
+data-site.js data-tests.js data-notes.js
+data-books.js data-updates.js                 editable content and settings
+logo-mark.png favicon-32.png favicon.ico
 apple-touch-icon.png og-image.png             logo and icons
 *.svg (book covers)  *.pdf (note PDFs)        content files
 robots.txt  sitemap.xml  README.md
 ```
 
-The files in `data-*.js` are the same as the `data/` files described below. Put new PDFs and covers in the same folder
+The `data-*.js` files are the ones described below as `data/...`. Put new PDFs and covers in the same folder
 and refer to them by file name only, for example `pdf: "my-notes.pdf"` and `cover: "my-book.svg"`.
 
 ---
@@ -124,9 +124,18 @@ and set `price` as a number in rupees. When you replace the sample books with re
 
 ### Logo
 
-Replace `logo.svg` with your logo (or change `logo` in `data-site.js` to a PNG path).
-Also replace `favicon.svg`, `favicon.ico` and `apple-touch-icon.png` (180 x 180)
-so the browser tab and home-screen icons match. The current logo is a temporary placeholder.
+The header and footer use `logo-mark.png` (the S symbol with the sun and book, on a transparent background).
+To change it, replace that file, or point `logo` in `data-site.js` to another image. The browser-tab and home-screen icons are
+`favicon-32.png`, `favicon.ico` and `apple-touch-icon.png` (180 x 180), and the sharing image is
+`og-image.png` (1200 x 630).
+
+### Latest updates (home page)
+
+The scrolling Latest Updates card on the home page reads `data-updates.js`. Add a line such as
+`{ date: "2026-12-01", type: "test", id: "my-new-test" }` (types: `test`, `note`, `book`, or `info` with your own `text` and `href`).
+Titles and links for tests, notes and books come from the other data files, and the newest date is shown first.
+The list scrolls by itself, pauses while the mouse is over it, and stops when a visitor clicks, touches or scrolls it, so they can
+move through it by hand. A Pause/Resume button restarts it. Visitors who prefer reduced motion get a normal scrollable list.
 
 ### Contact details and settings (`data-site.js`)
 
@@ -150,7 +159,7 @@ There is **no payment system**. Pressing *Purchase* opens a form that prepares a
 - If only `email` is set, the dialog offers an email draft and a copy button.
 - If neither is set, the dialog states that ordering is not connected and that nothing was placed or paid.
 
-To add a real gateway later, change `finishOrder()` in `books.js`.
+To add a real gateway later, change `finishOrder()` in `js/books.js`.
 
 ## 6. Contact form
 

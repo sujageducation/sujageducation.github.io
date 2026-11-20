@@ -116,7 +116,7 @@
   function pageMockTests() {
     var cats = S.data.testCategories;
     $("#category-grid").innerHTML = cats.map(function (c, i) {
-      return cards.category(c).replace('class="card', 'style="--i:' + Math.min(i, 8) + '" class="rise card');
+      return cards.category(c, i).replace('class="card', 'style="--i:' + Math.min(i, 8) + '" class="rise card');
     }).join("");
 
     var state = { q: U.qs("q") || "", cat: U.qs("cat") || "", diff: "" };

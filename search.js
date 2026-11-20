@@ -35,7 +35,7 @@
 
   function categoryResult(c) {
     var href = c.kind === "test" ? "test-category.html?cat=" : "notes.html?cat=";
-    return '<a class="card is-link cat-card" href="' + href + encodeURIComponent(c.id) + '"><span class="card-icon">' + icon(c.icon || "book", 22) + "</span><h3>" + esc(c.name) + "</h3><p>" + esc(c.description) +
+    return '<a class="card is-link cat-card" href="' + href + encodeURIComponent(c.id) + '"><span class="card-icon tone-green">' + icon(c.icon || "book", 22) + "</span><h3>" + esc(c.name) + "</h3><p>" + esc(c.description) +
       '</p><span class="meta"><span>' + (c.kind === "test" ? "Mock tests" : "Notes") + "</span>" + icon("arrow-right", 18) + "</a>";
   }
 

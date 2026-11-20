@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   var S = (window.SUJAG = window.SUJAG || {});
-  var site = S.site || { name: "SUJAG Education", logo: "logo.svg", social: {} };
+  var site = S.site || { name: "SUJAG Education", logo: "logo-mark.png", social: {} };
 
   /* ---------- Icons (24x24, stroke based) ---------- */
   var ICONS = {
@@ -60,6 +60,9 @@
     "external-link": '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
     layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
     lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    pause: '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+    sparkles: '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/>',
+    megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
     trash: '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>'
   };
 
@@ -247,7 +250,7 @@
 
   function brandHtml(cls) {
     return '<a class="brand' + (cls ? " " + cls : "") + '" href="index.html" aria-label="' + esc(site.name) + ' home">' +
-      '<img src="' + esc(site.logo) + '" alt="" width="36" height="36">' +
+      '<img src="' + esc(site.logo) + '" alt="" width="37" height="40">' +
       '<span class="brand-name">SUJAG<span>Education</span></span></a>';
   }
 
