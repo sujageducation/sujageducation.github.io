@@ -16,8 +16,8 @@ SUJAG.site = {
   // see README.md for the find-and-replace step.
   url: "https://example.com",
 
-  // Logo: replace the file at this path with your own logo (SVG or PNG).
-  logo: "assets/logo/logo.svg",
+  // Logo mark shown in the header and footer. Replace the file at this path to change it.
+  logo: "assets/logo/logo-mark.png",
 
   // Contact details. Leave a value empty ("") to show "coming soon" on the site.
   email: "",

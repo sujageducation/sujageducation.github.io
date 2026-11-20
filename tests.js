@@ -3,7 +3,7 @@
    1. Core test API (scoring, saving attempts and results in the browser).
    2. Page controllers for mock-tests.html, test-category.html and
       test-details.html (chosen by <body data-page="...">).
-   Test content itself lives in data-tests.js.
+   Test content itself lives in data/tests.js.
    ========================================================================== */
 (function () {
   "use strict";

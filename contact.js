@@ -2,7 +2,7 @@
    SUJAG Education - contact.js
    Validation and sending for contact.html.
    A static site has no server, so the form only sends a message when
-   contactEndpoint in data-site.js points to a form service (for example
+   contactEndpoint in data/site.js points to a form service (for example
    Formspree). Otherwise it says clearly that nothing was sent.
    ========================================================================== */
 (function () {
@@ -13,7 +13,7 @@
     var form = $("#contact-form"); if (!form) return;
     var site = S.site;
 
-    // Contact details (placeholders until filled in data-site.js)
+    // Contact details (placeholders until filled in data/site.js)
     var wa = (site.whatsapp || "").replace(/\D/g, "");
     $("#c-email").innerHTML = site.email ? '<a href="mailto:' + esc(site.email) + '">' + esc(site.email) + "</a>" : '<span class="muted">Email address coming soon</span>';
     $("#c-whatsapp").innerHTML = wa ? '<a href="https://wa.me/' + wa + '" target="_blank" rel="noopener">Chat on WhatsApp</a>' : '<span class="muted">WhatsApp number coming soon</span>';
