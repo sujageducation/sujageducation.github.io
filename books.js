@@ -2,7 +2,7 @@
    SUJAG Education - books.js
    Controllers for books.html (store listing) and book-details.html, plus the
    order dialog. Ordering is NOT connected to a payment system. Depending on
-   data/site.js it opens a WhatsApp chat or email with the order details, or
+   data-site.js it opens a WhatsApp chat or email with the order details, or
    explains that ordering is not set up yet. No payment is ever taken here.
    ========================================================================== */
 (function () {
@@ -106,7 +106,7 @@
       return;
     }
     var body = "<p><strong>Ordering is not connected yet.</strong> " + (S.site.demoMode ? "This website is currently a demonstration, so " : "") + "no order has been placed and no payment has been taken.</p>" +
-      '<p>The site owner can connect WhatsApp, email or a payment service in <code>data/site.js</code>. Meanwhile, this is the order text that would be sent:</p><div class="summary-box">' + esc(text) + "</div>";
+      '<p>The site owner can connect WhatsApp, email or a payment service in <code>data-site.js</code>. Meanwhile, this is the order text that would be sent:</p><div class="summary-box">' + esc(text) + "</div>";
     var actions = [{ label: "Close", value: "close", variant: "btn-ghost" }, { label: "Copy order text", value: "copy", variant: "btn-primary" }];
     if (mail) actions.splice(1, 0, { label: "Email it", value: "mail", variant: "btn-glass" });
     S.ui.modal({ title: "Order not placed", html: body, dismissValue: "close", actions: actions }).then(function (a) {

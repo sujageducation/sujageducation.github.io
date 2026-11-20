@@ -1,4 +1,17 @@
-# SUJAG Education
+# SUJAG Education (flat version)
+
+**This is the single-folder version.** There are no sub-folders: every file sits next to `index.html`.
+It exists so the site can be uploaded from a phone, where GitHub's upload screen cannot upload folders.
+
+## Uploading to GitHub from a phone
+
+1. Unzip the download so you can see all the files (about 60).
+2. In your repository open *Add file > Upload files*, tap the upload area and **select all files** (in the file picker choose "Select all"). Upload them in one go; if the picker limits you, do it in 2 or 3 batches.
+3. Commit the changes, then open *Settings > Pages*, choose the `main` branch and `/ (root)`.
+4. Wait a minute, then reload your site. The page should now be fully styled with the menu and cards.
+
+If the page appears as plain unstyled text, some files did not upload. Check that `style.css`, `main.js` and `data-tests.js` are listed in the repository root.
+
 
 A static, multi-page educational website with free mock tests, free study notes and a books store.
 Built with plain HTML, CSS and JavaScript. No build step, no Node.js, no database and no paid hosting
@@ -21,7 +34,7 @@ python3 -m http.server 8000
 
 **Publish on GitHub Pages**
 
-1. Create a GitHub repository and upload everything in this folder (the files must be at the repository root).
+1. Create a GitHub repository and upload every file in this folder (the files must be at the repository root).
 2. Go to *Settings > Pages*, choose *Deploy from a branch*, select `main` and `/ (root)`, then save.
 3. After a minute the site is live at `https://<username>.github.io/<repository>/`.
 
@@ -50,39 +63,24 @@ Detail pages (test, note, book) are single templates filled from the data files 
 
 ---
 
-## 3. Project structure
+## 3. Project structure (flat)
 
 ```
-Suguj-Education/
-├── *.html                 one file per page
-├── css/
-│   ├── style.css          design tokens, layout, components
-│   ├── responsive.css     breakpoints
-│   └── test.css           exam interface and results
-├── js/
-│   ├── main.js            icons, header, footer, dialogs, toasts, search overlay, accordion
-│   ├── cards.js           data lookups and card templates
-│   ├── tests.js           scoring, saved attempts, test listing and details pages
-│   ├── test-engine.js     timer, navigation and submit logic on take-test.html
-│   ├── results.js         results page and review
-│   ├── notes.js           notes pages
-│   ├── books.js           books pages and order dialog
-│   ├── search.js          site search
-│   ├── home.js            home page sections
-│   └── contact.js         contact form
-├── data/
-│   ├── site.js            site name, contact details, social links, settings
-│   ├── tests.js           test categories and tests with questions
-│   ├── notes.js           note categories and notes
-│   └── books.js           books
-├── assets/
-│   ├── logo/              logo.svg, favicon.svg, apple-touch-icon.png
-│   ├── images/            og-image.png (social sharing image)
-│   ├── books/             book covers
-│   └── notes/             note PDFs
-├── favicon.ico, robots.txt, sitemap.xml, .nojekyll
-└── README.md
+index.html, mock-tests.html, ... 404.html     one file per page
+style.css, responsive.css, test.css           styles
+main.js cards.js tests.js test-engine.js
+results.js notes.js books.js search.js
+home.js contact.js                            scripts
+data-site.js data-tests.js
+data-notes.js data-books.js                   editable content and settings
+logo.svg favicon.svg favicon.ico
+apple-touch-icon.png og-image.png             logo and icons
+*.svg (book covers)  *.pdf (note PDFs)        content files
+robots.txt  sitemap.xml  README.md
 ```
+
+The files in `data-*.js` are the same as the `data/` files described below. Put new PDFs and covers in the same folder
+and refer to them by file name only, for example `pdf: "my-notes.pdf"` and `cover: "my-book.svg"`.
 
 ---
 
@@ -91,7 +89,7 @@ Suguj-Education/
 Each data file starts with a comment that explains the format. Nothing else needs changing:
 listings, filters, counts, search, the home page and the sitemap-style links all read from these files.
 
-### Add a mock test (`data/tests.js`)
+### Add a mock test (`data-tests.js`)
 
 ```js
 {
@@ -112,25 +110,25 @@ listings, filters, counts, search, the home page and the sitemap-style links all
 To add a category, add an object to `SUJAG.data.testCategories`. It appears everywhere automatically.
 Marking is 1 mark per correct answer with no negative marking.
 
-### Add a note (`data/notes.js`)
+### Add a note (`data-notes.js`)
 
 Copy a note object, set a unique `id` and a `category` from `noteCategories`, and put the PDF in
-`assets/notes/`. Set `pdf: ""` if there is no PDF yet. The `sections` array is the readable version
+the same folder. Set `pdf: ""` if there is no PDF yet. The `sections` array is the readable version
 shown on the detail page. Make sure you own or have permission to share any PDF you upload.
 
-### Add a book (`data/books.js`)
+### Add a book (`data-books.js`)
 
-Copy a book object, add a cover image to `assets/books/` (portrait 3:4, for example 600 x 800)
+Copy a book object, add a cover image to the same folder (portrait 3:4, for example 600 x 800)
 and set `price` as a number in rupees. When you replace the sample books with real ones, set
-`demoMode: false` in `data/site.js` to hide the sample-content notices.
+`demoMode: false` in `data-site.js` to hide the sample-content notices.
 
 ### Logo
 
-Replace `assets/logo/logo.svg` with your logo (or change `logo` in `data/site.js` to a PNG path).
-Also replace `assets/logo/favicon.svg`, `favicon.ico` and `assets/logo/apple-touch-icon.png` (180 x 180)
+Replace `logo.svg` with your logo (or change `logo` in `data-site.js` to a PNG path).
+Also replace `favicon.svg`, `favicon.ico` and `apple-touch-icon.png` (180 x 180)
 so the browser tab and home-screen icons match. The current logo is a temporary placeholder.
 
-### Contact details and settings (`data/site.js`)
+### Contact details and settings (`data-site.js`)
 
 | Setting | What it does |
 |---|---|
@@ -152,7 +150,7 @@ There is **no payment system**. Pressing *Purchase* opens a form that prepares a
 - If only `email` is set, the dialog offers an email draft and a copy button.
 - If neither is set, the dialog states that ordering is not connected and that nothing was placed or paid.
 
-To add a real gateway later, change `finishOrder()` in `js/books.js`.
+To add a real gateway later, change `finishOrder()` in `books.js`.
 
 ## 6. Contact form
 
@@ -206,7 +204,7 @@ The home page includes Organization and WebSite structured data, and the FAQ pag
 
 **Before launch, replace the placeholder domain `https://example.com`:**
 
-1. Set `url` in `data/site.js`. Canonical and `og:url` tags of every page are then updated automatically by JavaScript.
+1. Set `url` in `data-site.js`. Canonical and `og:url` tags of every page are then updated automatically by JavaScript.
 2. For crawlers that do not run JavaScript, also replace the text in the static files. On Linux or macOS:
 
    ```bash

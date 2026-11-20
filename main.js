@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   var S = (window.SUJAG = window.SUJAG || {});
-  var site = S.site || { name: "SUJAG Education", logo: "assets/logo/logo.svg", social: {} };
+  var site = S.site || { name: "SUJAG Education", logo: "logo.svg", social: {} };
 
   /* ---------- Icons (24x24, stroke based) ---------- */
   var ICONS = {
@@ -373,7 +373,7 @@
 
   /* ---------- Boot ---------- */
   ready(function () {
-    setMeta({}); // keeps canonical and og:url in step with data/site.js
+    setMeta({}); // keeps canonical and og:url in step with data-site.js
     if (document.body.getAttribute("data-layout") !== "exam") { renderHeader(); renderFooter(); }
     initAccordions();
     $$(".js-year").forEach(function (n) { n.textContent = new Date().getFullYear(); });

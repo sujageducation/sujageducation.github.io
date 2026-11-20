@@ -1,7 +1,7 @@
 /* ==========================================================================
    SUJAG Education - notes.js
    Controllers for notes.html (listing) and note-details.html (single note).
-   Note content lives in data/notes.js.
+   Note content lives in data-notes.js.
    ========================================================================== */
 (function () {
   "use strict";
