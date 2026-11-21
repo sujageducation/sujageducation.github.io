@@ -5,8 +5,8 @@
    HOW TO ADD A NOTE
    1. Add a new object to SUJAG.data.notes (copy an existing one).
    2. Give it a unique "id" and set "category" to one of the category ids below.
-   3. Put your PDF in this same folder and set "pdf" to its file name, for example
-      "my-notes.pdf". Leave "pdf" as "" if there is no PDF yet.
+   3. Put your PDF in assets/notes/ and set "pdf" to its path, for example
+      "assets/notes/my-notes.pdf". Leave "pdf" as "" if there is no PDF yet.
    4. "size" and "pages" are optional text shown on the card (for example "120 KB").
    5. "sections" is the readable version of the note shown on the detail page.
       Each section has a heading and a list of points. You can leave it empty.

@@ -14,14 +14,14 @@
   <meta property="og:url" content="https://example.com/index.html">
   <meta property="og:image" content="https://example.com/assets/images/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="assets/logo/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
   <link rel="icon" href="favicon.ico" sizes="48x48">
-  <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "EducationalOrganization", "name": "SUJAG Education", "url": "https://example.com/", "logo": "https://example.com/assets/logo/logo-mark.png", "description": "A learning platform for students and job seekers with free practice tests, study notes and educational books."}</script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SUJAG Education", "url": "https://example.com/", "potentialAction": {"@type": "SearchAction", "target": "https://example.com/search.html?q={search_term_string}", "query-input": "required name=search_term_string"}}</script>
 </head>
@@ -30,9 +30,9 @@
 <main id="main">
 <section class="hero"><div class="container hero-inner">
   <div class="rise">
-    <span class="eyebrow">Free practice for exams and recruitment tests</span>
-    <h1>Prepare Smarter. <em>Learn at Your Own Pace.</em></h1>
-    <p class="lead">Practice with online tests, explore study notes, and find useful resources for your next exam.</p>
+    <span class="eyebrow" data-page-text="home.heroEyebrow">Free practice for exams and recruitment tests</span>
+    <h1><span data-page-text="home.heroTitle">Prepare Smarter.</span> <em data-page-text="home.heroAccent">Learn at Your Own Pace.</em></h1>
+    <p class="lead" data-page-text="home.heroLead">Practice with online tests, explore study notes, and find useful resources for your next exam.</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="mock-tests.html">Explore Mock Tests <svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <a class="btn btn-glass" href="notes.html">Browse Study Notes</a>
@@ -78,22 +78,24 @@
 </div></section>
 
 <section class="section"><div class="container">
-  <div class="section-head"><div><span class="eyebrow">Why SUJAG Education</span><h2>Simple, free and made for exam preparation</h2></div></div>
+  <div class="section-head"><div><span class="eyebrow" data-page-text="home.whyEyebrow">Why SUJAG Education</span><h2 data-page-text="home.whyHeading">Simple, free and made for exam preparation</h2></div></div>
   <div class="grid grid-3">
-    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><h3>Practice the way tests feel</h3><p>Timed questions, a question map and a final review help you get used to a real test format.</p></div>
-    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><h3>Notes without a paywall</h3><p>Revision notes are free to read and download, so you can study without creating an account.</p></div>
-    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span><h3>Books when you want more</h3><p>If you prefer a printed guide, the books store lists titles separately so it is always clear what is free and what is not.</p></div>
+    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><h3 data-page-text="home.why.0.title">Practice the way tests feel</h3><p data-page-text="home.why.0.text">Timed questions, a question map and a final review help you get used to a real test format.</p></div>
+    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><h3 data-page-text="home.why.1.title">Notes without a paywall</h3><p data-page-text="home.why.1.text">Revision notes are free to read and download, so you can study without creating an account.</p></div>
+    <div class="card feature"><span class="card-icon"><svg class="icon " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span><h3 data-page-text="home.why.2.title">Books when you want more</h3><p data-page-text="home.why.2.text">If you prefer a printed guide, the books store lists titles separately so it is always clear what is free and what is not.</p></div>
   </div>
 </div></section>
 </main>
 <div id="site-footer"></div>
-  <script src="data/site.js"></script>
-  <script src="data/tests.js"></script>
-  <script src="data/notes.js"></script>
-  <script src="data/books.js"></script>
-  <script src="data/updates.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/cards.js"></script>
-  <script src="js/home.js"></script>
+  <script src="data-site.js"></script>
+  <script src="data-tests.js"></script>
+  <script src="data-notes.js"></script>
+  <script src="data-books.js"></script>
+  <script src="data-updates.js"></script>
+  <script src="data-pages.js"></script>
+  <script src="main.js"></script>
+  <script src="cards.js"></script>
+  <script src="home.js"></script>
+  <script src="pages.js"></script>
 </body>
 </html>

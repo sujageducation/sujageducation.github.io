@@ -3,7 +3,7 @@
    Fills the category, test, notes and books sections on index.html from the
    data files, and runs the "Latest updates" list. Mark items with
    featured: true in the data to show them in the home sections. The updates
-   list is edited in data/updates.js.
+   list is edited in data-updates.js.
    ========================================================================== */
 (function () {
   "use strict";

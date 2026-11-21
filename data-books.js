@@ -5,7 +5,7 @@
    HOW TO ADD A BOOK
    1. Add a new object to SUJAG.data.books (copy an existing one).
    2. Give it a unique "id" and set a "category" (any text; filters are built automatically).
-   3. Put the cover image in this same folder and set "cover" to its file name.
+   3. Put the cover image in assets/books/ and set "cover" to its path.
       JPG, PNG, WebP and SVG all work. Portrait 3:4 images look best (for example 600 x 800).
    4. "price" is a number in rupees. Use 0 if the price is not decided yet.
    5. "contents" is the list shown under "What is inside".

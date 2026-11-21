@@ -92,7 +92,7 @@ Suguj-Education/
 Each data file starts with a comment that explains the format. Nothing else needs changing:
 listings, filters, counts, search, the home page and the sitemap-style links all read from these files.
 
-### Add a mock test (`data/tests.js`)
+### Add a mock test (`data-tests.js`)
 
 ```js
 {
@@ -113,34 +113,34 @@ listings, filters, counts, search, the home page and the sitemap-style links all
 To add a category, add an object to `SUJAG.data.testCategories`. It appears everywhere automatically.
 Marking is 1 mark per correct answer with no negative marking.
 
-### Add a note (`data/notes.js`)
+### Add a note (`data-notes.js`)
 
 Copy a note object, set a unique `id` and a `category` from `noteCategories`, and put the PDF in
 `assets/notes/`. Set `pdf: ""` if there is no PDF yet. The `sections` array is the readable version
 shown on the detail page. Make sure you own or have permission to share any PDF you upload.
 
-### Add a book (`data/books.js`)
+### Add a book (`data-books.js`)
 
 Copy a book object, add a cover image to `assets/books/` (portrait 3:4, for example 600 x 800)
 and set `price` as a number in rupees. When you replace the sample books with real ones, set
-`demoMode: false` in `data/site.js` to hide the sample-content notices.
+`demoMode: false` in `data-site.js` to hide the sample-content notices.
 
 ### Logo
 
-The header and footer use `assets/logo/logo-mark.png` (the S symbol with the sun and book, on a transparent background).
-To change it, replace that file, or point `logo` in `data/site.js` to another image. The browser-tab and home-screen icons are
-`assets/logo/favicon-32.png`, `favicon.ico` and `assets/logo/apple-touch-icon.png` (180 x 180), and the sharing image is
-`assets/images/og-image.png` (1200 x 630).
+The header and footer use `logo-mark.png` (the S symbol with the sun and book, on a transparent background).
+To change it, replace that file, or point `logo` in `data-site.js` to another image. The browser-tab and home-screen icons are
+`favicon-32.png`, `favicon.ico` and `apple-touch-icon.png` (180 x 180), and the sharing image is
+`og-image.png` (1200 x 630).
 
 ### Latest updates (home page)
 
-The scrolling Latest Updates card on the home page reads `data/updates.js`. Add a line such as
+The scrolling Latest Updates card on the home page reads `data-updates.js`. Add a line such as
 `{ date: "2026-12-01", type: "test", id: "my-new-test" }` (types: `test`, `note`, `book`, or `info` with your own `text` and `href`).
 Titles and links for tests, notes and books come from the other data files, and the newest date is shown first.
 The list scrolls by itself, pauses while the mouse is over it, and stops when a visitor clicks, touches or scrolls it, so they can
 move through it by hand. A Pause/Resume button restarts it. Visitors who prefer reduced motion get a normal scrollable list.
 
-### Contact details and settings (`data/site.js`)
+### Contact details and settings (`data-site.js`)
 
 | Setting | What it does |
 |---|---|
@@ -162,7 +162,7 @@ There is **no payment system**. Pressing *Purchase* opens a form that prepares a
 - If only `email` is set, the dialog offers an email draft and a copy button.
 - If neither is set, the dialog states that ordering is not connected and that nothing was placed or paid.
 
-To add a real gateway later, change `finishOrder()` in `js/books.js`.
+To add a real gateway later, change `finishOrder()` in `books.js`.
 
 ## 6. Contact form
 
@@ -216,7 +216,7 @@ The home page includes Organization and WebSite structured data, and the FAQ pag
 
 **Before launch, replace the placeholder domain `https://example.com`:**
 
-1. Set `url` in `data/site.js`. Canonical and `og:url` tags of every page are then updated automatically by JavaScript.
+1. Set `url` in `data-site.js`. Canonical and `og:url` tags of every page are then updated automatically by JavaScript.
 2. For crawlers that do not run JavaScript, also replace the text in the static files. On Linux or macOS:
 
    ```bash
@@ -251,3 +251,19 @@ without script errors or horizontal scrolling, all internal links and data asset
 (start, answer, Previous/Next, question map, refresh resume, confirm and submit, scoring, review, filters, retake),
 automatic submission when time expires, mobile question sheet, navigation menu, notes and books filters, order dialog,
 contact validation, FAQ accordion and site search. Real-device testing on your own phone is still recommended.
+
+## Admin panel (admin.html)
+
+Open `admin.html` on your site (for example `https://yourname.github.io/admin.html`). It is not linked from the public menu and is marked noindex.
+
+**What you can edit:** mock tests and questions, test and note categories, notes (with PDF upload), books (with cover upload), latest updates, home/about/FAQ/privacy/terms text, site details, logo, default test instructions, and a members list.
+
+**Make a test from a PDF or TXT file:** Auto-generate, choose a file or paste text. The detector finds numbered questions, A-D options, `Answer: B` lines, explanations, answer keys at the end (`1-B 2-C`), and options marked with `*`. Review the preview, fix anything in red, then create a new test or add to an existing one. Scanned PDFs (photos of pages) have no text and cannot be read. PDF reading loads pdf.js from cdnjs, so it needs internet; TXT and pasted text work offline. The text detector is tested; reading real PDFs in a browser was not testable in the build environment, so try one early.
+
+**Saving (publishing):** Settings, then connect GitHub with a fine-grained personal access token limited to this one repository with Contents: Read and write. Press Publish changes to commit the data files. Without a token, use Download files and upload them yourself. The token stays in your browser tab (or on the device if you tick Remember) and is never written into the site.
+
+**Security, honestly:** a static site has no real login. Anyone can open admin.html, but nobody can publish without your token, because GitHub checks it. Do not share the token.
+
+**Members:** stored only in the browser you use (never in the public repository). Add, edit, search, import/export CSV, JSON backup, or back up to a separate PRIVATE repository (the panel refuses public ones). Browser data can be lost, so export regularly. Do not store ID numbers or sensitive details.
+
+**Limits:** the HTML pages' canonical/Open Graph address is set at build time, so changing the website address in Settings does not rewrite those tags.

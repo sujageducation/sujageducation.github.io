@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   var S = (window.SUJAG = window.SUJAG || {});
-  var site = S.site || { name: "SUJAG Education", logo: "assets/logo/logo-mark.png", social: {} };
+  var site = S.site || { name: "SUJAG Education", logo: "logo-mark.png", social: {} };
 
   /* ---------- Icons (24x24, stroke based) ---------- */
   var ICONS = {
@@ -362,7 +362,8 @@
   function initAccordions() {
     $$("[data-accordion] .acc-item").forEach(function (item) {
       var trigger = $(".acc-trigger", item), panel = $(".acc-panel", item);
-      if (!trigger || !panel) return;
+      if (!trigger || !panel || item.getAttribute("data-ready")) return;
+      item.setAttribute("data-ready", "1");
       var inner = panel.firstElementChild;
       function set(open) {
         item.classList.toggle("is-open", open);
@@ -374,9 +375,11 @@
     });
   }
 
+  S.initAccordions = initAccordions;
+
   /* ---------- Boot ---------- */
   ready(function () {
-    setMeta({}); // keeps canonical and og:url in step with data/site.js
+    setMeta({}); // keeps canonical and og:url in step with data-site.js
     if (document.body.getAttribute("data-layout") !== "exam") { renderHeader(); renderFooter(); }
     initAccordions();
     $$(".js-year").forEach(function (n) { n.textContent = new Date().getFullYear(); });
