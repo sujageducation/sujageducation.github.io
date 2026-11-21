@@ -1,7 +1,7 @@
 /* Admin login (salted hash only). Written by the admin panel. */
 window.SUJAG = window.SUJAG || {};
 SUJAG.auth = {
-  "salt": "6c3e462a6e10d81e603d642cba8fd41b",
-  "hash": "5085bfd1cbf82bfbeaa061de0a718c8c7faa866c9107ce19df02dfd533bf597c",
+  "salt": "663479161e052e4decd044362e8c4cee",
+  "hash": "f010fbc5696418243251420e60bfc1feed39e4e9cebb7d66fc4355ff31a8e3c6",
   "iter": 200000
 };
