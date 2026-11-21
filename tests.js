@@ -230,13 +230,13 @@
     var showResume = !!progress;
 
     function formHtml() {
-      return '<form id="start-form" novalidate><div class="field"><label for="cand-name">Candidate name <span class="opt">(optional)</span></label>' +
-        '<input id="cand-name" name="name" type="text" maxlength="60" autocomplete="name" value="' + esc(cand.name || "") + '"></div>' +
-        '<div class="field"><label for="cand-city">City <span class="opt">(optional)</span></label><input id="cand-city" name="city" type="text" maxlength="40" autocomplete="address-level2" value="' + esc(cand.city || "") + '"></div>' +
+      return '<form id="start-form" novalidate><div class="field"><label for="cand-name">Candidate name <span class="req">(required)</span></label>' +
+        '<input id="cand-name" name="name" type="text" maxlength="60" autocomplete="name" required value="' + esc(cand.name || "") + '"><span class="error">Please enter your name.</span></div>' +
+        '<div class="field"><label for="cand-city">City <span class="req">(required)</span></label><input id="cand-city" name="city" type="text" maxlength="40" autocomplete="address-level2" required value="' + esc(cand.city || "") + '"><span class="error">Please enter your city.</span></div>' +
         '<div class="field" id="phone-field"><label for="cand-phone">Contact number <span class="opt">(optional)</span></label><input id="cand-phone" name="phone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" value="' + esc(cand.phone || "") + '" aria-describedby="phone-err">' +
         '<span class="error" id="phone-err">Enter a valid number using digits, spaces, + or -.</span></div>' +
         '<button type="submit" class="btn btn-primary btn-block">' + icon("play", 18) + " Start Test</button>" +
-        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">You can leave every field empty and start directly. Details stay in this browser and are only used to show on your result.</p></form>';
+        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">Your name and city are needed to start. Details stay in this browser and are only used to show on your result.</p></form>';
     }
 
     function paint() {
@@ -258,8 +258,12 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         var phone = form.phone.value.trim(), field = $("#phone-field");
-        var ok = validPhone(phone);
+        var okN = form.name.value.trim().length >= 2, okC = form.city.value.trim().length >= 2, ok = validPhone(phone);
+        form.name.closest(".field").classList.toggle("has-error", !okN);
+        form.city.closest(".field").classList.toggle("has-error", !okC);
         field.classList.toggle("has-error", !ok);
+        if (!okN) { form.name.focus(); return; }
+        if (!okC) { form.city.focus(); return; }
         if (!ok) { form.phone.focus(); return; }
         var st = T.startAttempt(test, { name: form.name.value.trim(), city: form.city.value.trim(), phone: phone });
         if (!st) {

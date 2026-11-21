@@ -43,63 +43,28 @@
       .map(resolveUpdate).filter(Boolean);
     if (!items.length) { host.hidden = true; return; }
 
-    var vp = $("#updates-viewport"), list = $("#updates-list"), btn = $("#updates-toggle"), state = $("#updates-state");
+    var vp = $("#updates-viewport"), list = $("#updates-list");
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var looping = !reduce && items.length > 3;
-    list.innerHTML = items.map(function (x) { return updateItem(x, false); }).join("") +
-      (looping ? items.map(function (x) { return updateItem(x, true); }).join("") : "");
+    list.innerHTML = items.map(function (x) { return updateItem(x, false); }).join("");
 
-    var SPEED = 30; // pixels per second
-    var userPaused = reduce, hoverPaused = false, offscreen = false;
-    var pos = 0, last = 0, raf = 0;
-
-    function running() { return looping && !userPaused && !hoverPaused && !offscreen && !document.hidden; }
-    function loopHeight() { return list.scrollHeight / 2; }
-
-    function paint() {
-      host.classList.toggle("is-paused", !running());
-      var isRun = !userPaused;
-      btn.setAttribute("aria-pressed", String(userPaused));
-      btn.innerHTML = icon(userPaused ? "play" : "pause", 16) + (userPaused ? "Resume" : "Pause");
-      btn.setAttribute("aria-label", userPaused ? "Resume automatic scrolling" : "Pause automatic scrolling");
-      btn.hidden = reduce || !looping;
-      state.innerHTML = icon(isRun ? "refresh" : "info", 16) + "<span>" + (reduce || !looping ? "Scroll to see more updates." : isRun ? "Scrolling automatically. Click or touch to pause." : "Paused. Scroll freely, or press Resume.") + "</span>";
-    }
+    // The list scrolls once from the first update to the last, then stops. Any touch, click, wheel,
+    // key press or hover stops the movement for good so the reader can scroll by hand.
+    var SPEED = 28, pos = 0, last = 0, raf = 0, stopped = reduce, started = false;
     function frame(t) {
-      raf = 0;
-      if (!running()) { last = 0; return; }
+      raf = 0; if (stopped) return;
       if (!last) last = t;
       var dt = Math.min(t - last, 64); last = t;
       pos += (SPEED * dt) / 1000;
-      var h = loopHeight(); if (h > 0 && pos >= h) pos -= h;
-      vp.scrollTop = pos;
-      raf = requestAnimationFrame(frame);
+      var max = vp.scrollHeight - vp.clientHeight;
+      if (max <= 0 || pos >= max) { vp.scrollTop = Math.max(0, max); stopped = true; return; }
+      vp.scrollTop = pos; raf = requestAnimationFrame(frame);
     }
-    function sync() { // start or stop the loop to match the current state
-      paint();
-      if (running() && !raf) { pos = vp.scrollTop; last = 0; raf = requestAnimationFrame(frame); }
-      if (!running() && raf) { cancelAnimationFrame(raf); raf = 0; last = 0; }
-    }
-    function pauseForUser() { if (!userPaused) { userPaused = true; sync(); } }
-
-    // Clicking, touching, scrolling or focusing the list stops the movement so the reader can scroll by hand.
-    ["pointerdown", "wheel", "touchstart", "focusin"].forEach(function (ev) { vp.addEventListener(ev, pauseForUser, { passive: true }); });
-    vp.addEventListener("keydown", function (e) { if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"].indexOf(e.key) !== -1) pauseForUser(); });
-    btn.addEventListener("click", function () { userPaused = !userPaused; sync(); });
-    host.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { hoverPaused = true; sync(); } });
-    host.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { hoverPaused = false; sync(); } });
-    document.addEventListener("visibilitychange", sync);
-    if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { offscreen = !en[0].isIntersecting; sync(); }).observe(host);
-
-    // Keeps the loop seamless while the reader scrolls by hand (the second half repeats the first).
-    vp.addEventListener("scroll", function () {
-      if (!looping) return;
-      var h = loopHeight(), st = vp.scrollTop;
-      if (h > 0 && st >= h) { vp.scrollTop = st - h; pos = vp.scrollTop; }
-      else if (st <= 0 && userPaused && h > 0 && last === 0 && vp.dataset.touched) vp.scrollTop = h;
-    }, { passive: true });
-    vp.addEventListener("pointerdown", function () { vp.dataset.touched = "1"; }, { passive: true });
-    sync();
+    function stop() { stopped = true; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    ["pointerdown", "touchstart", "wheel", "focusin", "mouseenter"].forEach(function (ev) { vp.addEventListener(ev, stop, { passive: true }); });
+    vp.addEventListener("keydown", stop);
+    function begin() { if (started || stopped) return; started = true; pos = 0; vp.scrollTop = 0; raf = requestAnimationFrame(frame); }
+    if ("IntersectionObserver" in window) { var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { io.disconnect(); setTimeout(begin, 900); } }); io.observe(host); }
+    else setTimeout(begin, 900);
   }
 
   U.ready(function () {

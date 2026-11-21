@@ -10,9 +10,9 @@
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-<div class="shell">
+<div class="shell" id="shell">
   <aside class="side" id="side" aria-label="Admin menu">
-    <div class="brand"><img src="logo-mark.png" alt="" width="30" height="32"><div><strong>SUJAG</strong><span>Admin panel</span></div></div>
+    <div class="brand"><img src="logo-full.png" alt="" width="30" height="42" style="background:#fff;border-radius:6px;padding:2px;height:42px;width:auto"><div><strong>SUJAG</strong><span>Admin panel</span></div></div>
     <nav id="nav"></nav>
     <a class="viewsite" href="index.html" target="_blank" rel="noopener">Open public website</a>
   </aside>
@@ -23,6 +23,7 @@
       <div class="top-actions">
         <button type="button" class="btn" id="dlBtn">Download files</button>
         <button type="button" class="btn primary" id="pubBtn">Publish changes</button>
+        <button type="button" class="btn ghost logout" id="outBtn">Sign out</button>
       </div>
     </header>
     <main id="view" tabindex="-1"></main>
@@ -34,6 +35,7 @@
 <script src="admin-parser.js"></script>
 <script src="admin-config.js"></script>
 <script src="admin.js"></script>
+<script src="admin-auth.js"></script>
 <script src="admin-members.js"></script>
 </body>
 </html>
