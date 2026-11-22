@@ -185,3 +185,6 @@ body.exam { background: var(--bg); min-height: 100vh; }
   .r-opt { padding: 10px 12px; }
   .r-opt .tag span { display: none; }
 }
+
+/* SALU Community-inspired exam experience refinements */
+.exam-shell,.test-shell{max-width:1120px;margin-inline:auto}.panel,.test-card,.result-hero{border-radius:18px}.q-dot{border-radius:10px;min-width:36px;min-height:36px}.options label,.option{border-radius:14px;transition:transform .15s,box-shadow .15s}.options label:hover,.option:hover{transform:translateY(-1px)}.exam-top,.test-header{position:sticky;top:0;z-index:8;backdrop-filter:blur(12px)}@media print{header,nav,.btn,.review-head .filter-row{display:none!important}body{background:white!important;color:#111!important}.panel,.result-hero{box-shadow:none!important;border:1px solid #ddd!important}}

@@ -56,7 +56,7 @@
   function b64(buf) { var b = new Uint8Array(buf), s = "", i; for (i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
   function b64t(str) { return b64(new TextEncoder().encode(str)); }
   function unb64t(s) { var bin = atob(s.replace(/\s/g, "")), u = new Uint8Array(bin.length), i; for (i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
-  A.b64t = b64t; A.unb64t = unb64t; A.fmtSize = fmtSize;
+  A.b64t = b64t; A.unb64t = unb64t; A.unb64t_raw = function (s) { return s.replace(/\s/g, ""); }; A.fmtSize = fmtSize;
 
   /* ---------- form builders (edit objects in place) ---------- */
   function fld(label, ctrl, hint, cls) { return h("label", { c: "f " + (cls || "") }, h("span", {}, label), ctrl, hint ? h("small", {}, hint) : null); }
@@ -173,7 +173,7 @@
     if (e.status === 404) return "Not found (404). Check owner, repository and branch, and that the token can access this repository.";
     return e.message || "Network error";
   }
-  A.gh = gh; A.friendly = friendly;
+  A.gh = gh; A.friendly = friendly; A.saveG = function () { saveG(); };
   function epath(p) { return p.split("/").map(encodeURIComponent).join("/"); }
   function putFile(path, b64content, message, repo) {
     repo = repo || G; var base = "/repos/" + repo.owner + "/" + repo.repo + "/contents/" + epath(path);
@@ -277,7 +277,7 @@
   A.readFileText = readFileText;
 
   /* ---------- routing ---------- */
-  var NAV = [["#dashboard", "Dashboard"], ["sep", "Mock tests"], ["#tests", "All tests"], ["#generate", "Auto-generate from PDF or TXT"], ["#testcats", "Test categories"], ["sep", "Study material"], ["#notes", "Notes"], ["#notecats", "Note categories"], ["#books", "Books"], ["sep", "Website"], ["#updates", "Latest updates"], ["#pages", "Page text and FAQ"], ["#settings", "Settings and GitHub"], ["sep", "People"], ["#members", "Members"]];
+  var NAV = [["#dashboard", "Dashboard"], ["sep", "Mock tests"], ["#results", "Mock Test Results"], ["#tests", "All tests"], ["#generate", "Auto-generate from PDF or TXT"], ["#testcats", "Test categories"], ["sep", "Study material"], ["#notes", "Notes"], ["#notecats", "Note categories"], ["#books", "Books"], ["sep", "Website"], ["#updates", "Latest updates"], ["#pages", "Page text and FAQ"], ["#settings", "Settings and GitHub"], ["sep", "People"], ["#members", "Members"]];
   function buildNav() {
     var n = document.getElementById("nav"); n.innerHTML = "";
     NAV.forEach(function (x) { n.appendChild(x[0] === "sep" ? h("div", { c: "sep" }, x[1]) : h("a", { href: x[0] }, x[1])); });
@@ -294,6 +294,17 @@
   A.redraw = route;
 
   /* ---------- dashboard ---------- */
+  ROUTES.results = function () {
+    var all=[]; try { all=JSON.parse(localStorage.getItem("sujag:results")||"[]"); } catch(e) { all=[]; }
+    if(!Array.isArray(all)) all=[];
+    var search=h("input",{type:"search",placeholder:"Search name, test, city or phone",c:"input",style:"max-width:420px"});
+    var box=h("div",{c:"panel"});
+    function csv(){ var keys=["submittedAt","name","city","phone","title","total","correct","wrong","unanswered","marks","percent","timeTaken","rid"]; var rows=[keys.join(",")].concat(all.map(function(r){var c=r.candidate||{};return keys.map(function(k){var v=k==="name"?c.name:k==="city"?c.city:k==="phone"?c.phone:r[k];return '"'+String(v==null?"":v).replace(/"/g,'""')+'"';}).join(",");}));var b=new Blob([rows.join("\n")],{type:"text/csv"}),u=URL.createObjectURL(b),a=h("a",{href:u,download:"sujag-test-results.csv"});a.click();setTimeout(function(){URL.revokeObjectURL(u)},1000);}
+    function printResult(r){var c=r.candidate||{},html='<!doctype html><html><head><meta charset="utf-8"><title>SUJAG Education Result</title><style>body{font-family:Arial,sans-serif;margin:28px;color:#17212b}h1{color:#176b58}table{width:100%;border-collapse:collapse}td,th{padding:10px;border:1px solid #ddd;text-align:left}.score{font-size:30px;font-weight:bold}</style></head><body><h1>SUJAG Education</h1><h2>Mock Test Result</h2><p><b>Candidate:</b> '+(c.name||'')+'<br><b>City:</b> '+(c.city||'')+'<br><b>Phone:</b> '+(c.phone||'')+'</p><h2>'+r.title+'</h2><p class="score">'+r.marks+' / '+r.total+' — '+r.percent+'%</p><table><tr><th>Correct</th><th>Wrong</th><th>Unanswered</th><th>Time</th></tr><tr><td>'+r.correct+'</td><td>'+r.wrong+'</td><td>'+r.unanswered+'</td><td>'+r.timeTaken+' sec</td></tr></table><p>Submitted: '+new Date(r.submittedAt).toLocaleString()+'</p><p>Use Print → Save as PDF.</p></body></html>';var w=window.open("","_blank");if(w){w.document.write(html);w.document.close();w.focus();w.print();}}
+    function draw(){var q=search.value.toLowerCase();var filtered=all.filter(function(r){var c=r.candidate||{};return [c.name,c.city,c.phone,r.title,r.category].join(" ").toLowerCase().includes(q);});box.innerHTML="";box.appendChild(h("div",{c:"row sp"},h("strong",{},filtered.length+" result record(s) on this browser"),h("div",{c:"row"},btn("Export CSV",csv),btn("Refresh",function(){ROUTES.results();}))));if(!filtered.length){box.appendChild(h("p",{c:"mut"},"No results found. Results saved by candidates in this browser/device will appear here."));return;}var table=h("div",{c:"table-wrap"}),t=h("table",{}),thead=h("thead",{},h("tr",{},["Candidate","Test","Score","City","Date",""].map(function(x){return h("th",{},x)}))),tbody=h("tbody",{});filtered.forEach(function(r){var c=r.candidate||{},tr=h("tr",{});[c.name||"—",r.title,r.marks+" / "+r.total+" ("+r.percent+"%)",c.city||"—",new Date(r.submittedAt).toLocaleString()].forEach(function(v){tr.appendChild(h("td",{},v));});var td=h("td",{},btn("PDF",function(){printResult(r);}),btn("Delete",function(){if(confirm("Delete this result from this browser?")){all=all.filter(function(x){return x.rid!==r.rid});localStorage.setItem("sujag:results",JSON.stringify(all));ROUTES.results();}},"danger"));tr.appendChild(td);tbody.appendChild(tr);});t.appendChild(thead);t.appendChild(tbody);table.appendChild(t);box.appendChild(table);}
+    setView([head("Mock Test Results","Candidate attempts saved on this browser/device."),h("div",{c:"note warn"},"This dashboard reads browser-local results. Static GitHub Pages cannot receive submissions from other candidates' devices without a shared online storage service."),search,box]);search.addEventListener("input",draw);draw();
+  };
+
   ROUTES.dashboard = function () {
     var qn = D.tests.reduce(function (s, t) { return s + (t.questions || []).length; }, 0), mem = (A.members ? A.members.count() : 0);
     var probs = validate();
@@ -573,21 +584,27 @@
         h("div", { c: "cols" }, inp(soc, "facebook", { label: "Facebook link" }), inp(soc, "instagram", { label: "Instagram link" }), inp(soc, "youtube", { label: "YouTube link" })),
         inp(S, "contactEndpoint", { label: "Contact form endpoint (optional)", hint: "A Formspree-style URL. Empty keeps the form in not-connected mode." }), chk(S, "demoMode", "Show sample-content notices (turn off when you have your own real books)")),
       h("div", { c: "card" }, h("h3", {}, "Logo"), h("div", { c: "row" }, logo, btn("Upload new logo", function () { pickUpload("logo", function (path) { S.logo = path; logo.src = pendingSrc(path); touch(); }); })), h("small", { c: "mut" }, "The logo is shrunk to fit 256 pixels. Favicons are not changed.")),
-      h("div", { c: "card" }, h("h3", {}, "Default test instructions"), lines(D, "defaultInstructions", { label: "One per line", rows: 8, hint: "Shown on every test that has no custom instructions." }))]);
+      h("div", { c: "card" }, h("h3", {}, "Default test instructions"), lines(D, "defaultInstructions", { label: "One per line", rows: 8, hint: "Shown on every test that has no custom instructions." })), A.auth ? A.auth.changeCard() : null]);
   };
 
   /* ---------- boot ---------- */
+  function boot() {
+    loadAll().then(function () {
+    try { var d = JSON.parse(localStorage.getItem("sujag:admin:draft") || "null"); if (d && d.D && JSON.stringify(d.D) !== JSON.stringify(D) && confirm("You have unpublished edits saved in this browser from " + new Date(d.t).toLocaleString() + ". Restore them?")) { Object.keys(d.D).forEach(function (k) { D[k] = d.D[k]; }); } else if (d) localStorage.removeItem("sujag:admin:draft"); } catch (e) {}
+    refreshBar(); route();
+  }).catch(function (e) { setView(h("div", { c: "note bad" }, "Could not load the data files: " + e.message + ". Open the admin page from the same folder as the website.")); });
+    if (A.members && A.members.load) A.members.load();
+  }
+
   A.start = function () {
     buildNav(); loadG();
     document.getElementById("pubBtn").addEventListener("click", publish);
+    document.getElementById("outBtn").addEventListener("click", function () { A.logout(); });
     document.getElementById("dlBtn").addEventListener("click", download);
     var mb = document.getElementById("menuBtn"); mb.addEventListener("click", function () { var o = document.getElementById("side").classList.toggle("open"); mb.setAttribute("aria-expanded", o); });
     window.addEventListener("hashchange", route);
     window.addEventListener("beforeunload", function (e) { if (dirtyFiles().length || Object.keys(PEND).length) { e.preventDefault(); e.returnValue = ""; } });
-    loadAll().then(function () {
-      try { var d = JSON.parse(localStorage.getItem("sujag:admin:draft") || "null"); if (d && d.D && JSON.stringify(d.D) !== JSON.stringify(D) && confirm("You have unpublished edits saved in this browser from " + new Date(d.t).toLocaleString() + ". Restore them?")) { Object.keys(d.D).forEach(function (k) { D[k] = d.D[k]; }); } else if (d) localStorage.removeItem("sujag:admin:draft"); } catch (e) {}
-      refreshBar(); route();
-    }).catch(function (e) { setView(h("div", { c: "note bad" }, "Could not load the data files: " + e.message + ". Open the admin page from the same folder as the website.")); });
+    (A.gate || function (d) { d(); })(boot);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(A.start, 0); }); else setTimeout(A.start, 0);
 })();

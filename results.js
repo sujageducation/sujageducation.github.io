@@ -25,7 +25,7 @@
   function historyPage() {
     S.setMeta({ title: "Your Results", description: "Test results saved in this browser." });
     var all = T.getResults();
-    $("#result-head").innerHTML = '<div class="container"><h1>Your results</h1><p class="lead">Results saved in this browser. They are not stored on a server.</p></div>';
+    $("#result-head").innerHTML = '<div class="container"><h1>Your results</h1><p class="lead">Results saved on this device. Online collection requires a shared service.</p></div>';
     if (!all.length) { $("#result-main").innerHTML = '<div class="container">' + S.cards.empty("No results yet", "Finish a mock test and your result will appear here.") +
       '<p style="text-align:center;margin-top:18px"><a class="btn btn-primary" href="mock-tests.html">Browse mock tests</a></p></div>'; return; }
     $("#result-main").innerHTML = '<div class="container"><div class="panel"><div class="table-wrap"><table class="history-table"><thead><tr><th>Test</th><th>Date</th><th>Score</th><th>%</th><th><span class="visually-hidden">View</span></th></tr></thead><tbody>' +
@@ -70,7 +70,7 @@
       '<div class="result-info"><h1>' + esc(r.title) + "</h1>" +
       '<p class="who">' + (who ? "Candidate: " + esc(who) + " &middot; " : "") + esc(cat ? cat.name : "") + " &middot; " + esc(U.fmtDate(r.submittedAt, true)) + (r.autoSubmitted ? " &middot; Submitted automatically when time ended" : "") + "</p>" +
       '<p class="summary">' + esc(summaryText(r.percent)) + '</p><div class="row">' +
-      '<button type="button" class="btn btn-primary" id="show-review">' + icon("eye", 18) + " Review Answers</button>" +
+      '<button type="button" class="btn btn-ghost" id="print-result">Save PDF</button><button type="button" class="btn btn-primary" id="show-review">' + icon("eye", 18) + " Review Answers</button>" +
       '<a class="btn btn-glass" href="test-details.html?id=' + encodeURIComponent(r.testId) + "&retake=" + encodeURIComponent(r.rid) + '">' + icon("refresh", 18) + " Retake Test</a></div></div></div></div>";
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
@@ -91,13 +91,6 @@
       '<section class="section-sm" id="next-steps"></section>' +
       '<div class="notice"><span>' + icon("info", 18) + "</span><p>This result is saved only in this browser on this device. It is not uploaded anywhere, and clearing your browser data will remove it.</p></div></div>";
 
-    // Print/save result as PDF using the browser's print dialog.
-    var pdfBtn = document.createElement("button");
-    pdfBtn.type = "button"; pdfBtn.className = "btn btn-ghost"; pdfBtn.textContent = "Download / Save PDF";
-    pdfBtn.addEventListener("click", function(){ window.print(); });
-    var resultContainer = document.querySelector("#result-main .container");
-    if (resultContainer) { var printRow = document.createElement("div"); printRow.className = "row"; printRow.style.marginTop = "16px"; printRow.appendChild(pdfBtn); resultContainer.appendChild(printRow); }
-
     // Animate ring and bar once on load
     requestAnimationFrame(function () {
       $("#ring .value").style.strokeDashoffset = String(CIRC * (1 - r.percent / 100));
@@ -105,6 +98,7 @@
     });
 
     var review = $("#review"), btn = $("#show-review");
+    var printBtn=$("#print-result"); if(printBtn) printBtn.addEventListener("click",function(){window.print();});
     btn.addEventListener("click", function () {
       var open = review.hidden;
       review.hidden = !open;

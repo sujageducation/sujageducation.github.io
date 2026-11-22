@@ -80,7 +80,11 @@
       els.body.classList.remove("in-next", "in-prev");
       if (dir) { void els.body.offsetWidth; els.body.classList.add(dir > 0 ? "in-next" : "in-prev"); }
       els.prev.disabled = cur === 0;
-      els.next.disabled = cur === n - 1;
+      var lastQ = cur === n - 1;
+      els.next.disabled = false;
+      els.next.classList.toggle("is-submit", lastQ);
+      if (lastQ) { if (!els.next.dataset.nextHtml) els.next.dataset.nextHtml = els.next.innerHTML; els.next.innerHTML = "Submit Test " + icon("check", 18); }
+      else if (els.next.dataset.nextHtml) els.next.innerHTML = els.next.dataset.nextHtml;
       els.clear.hidden = st.answers[cur] === null;
       paintGrid();
     }
@@ -106,7 +110,7 @@
       var first = els.body.querySelector("input"); if (first) first.focus();
     });
     els.prev.addEventListener("click", function () { go(cur - 1, true); });
-    els.next.addEventListener("click", function () { go(cur + 1, true); });
+    els.next.addEventListener("click", function () { if (cur === n - 1) askSubmit(); else go(cur + 1, true); });
     els.grid.addEventListener("click", function (e) {
       var b = e.target.closest(".q-dot"); if (!b) return;
       go(parseInt(b.getAttribute("data-i"), 10), true);
