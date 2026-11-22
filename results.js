@@ -91,6 +91,13 @@
       '<section class="section-sm" id="next-steps"></section>' +
       '<div class="notice"><span>' + icon("info", 18) + "</span><p>This result is saved only in this browser on this device. It is not uploaded anywhere, and clearing your browser data will remove it.</p></div></div>";
 
+    // Print/save result as PDF using the browser's print dialog.
+    var pdfBtn = document.createElement("button");
+    pdfBtn.type = "button"; pdfBtn.className = "btn btn-ghost"; pdfBtn.textContent = "Download / Save PDF";
+    pdfBtn.addEventListener("click", function(){ window.print(); });
+    var resultContainer = document.querySelector("#result-main .container");
+    if (resultContainer) { var printRow = document.createElement("div"); printRow.className = "row"; printRow.style.marginTop = "16px"; printRow.appendChild(pdfBtn); resultContainer.appendChild(printRow); }
+
     // Animate ring and bar once on load
     requestAnimationFrame(function () {
       $("#ring .value").style.strokeDashoffset = String(CIRC * (1 - r.percent / 100));

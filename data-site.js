@@ -17,7 +17,7 @@ SUJAG.site = {
   url: "https://example.com",
 
   // Logo mark shown in the header and footer. Replace the file at this path to change it.
-  logo: "logo-full.png",
+  logo: "logo-mark.png",
 
   // Contact details. Leave a value empty ("") to show "coming soon" on the site.
   email: "",

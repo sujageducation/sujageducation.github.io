@@ -250,8 +250,8 @@
 
   function brandHtml(cls) {
     return '<a class="brand' + (cls ? " " + cls : "") + '" href="index.html" aria-label="' + esc(site.name) + ' home">' +
-      '<img src="' + esc(site.logo) + '" alt="" height="54">' +
-      '<span class="brand-name">SUJAG Education</span></a>';
+      '<img src="' + esc(site.logo) + '" alt="" width="37" height="40">' +
+      '<span class="brand-name">SUJAG<span>Education</span></span></a>';
   }
 
   function renderHeader() {

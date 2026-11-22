@@ -264,8 +264,6 @@ Open `admin.html` on your site (for example `https://yourname.github.io/admin.ht
 
 **Security, honestly:** a static site has no real login. Anyone can open admin.html, but nobody can publish without your token, because GitHub checks it. Do not share the token.
 
-**Admin login:** the first time you open admin.html you create a username and password (10+ characters, a long phrase is best) and connect GitHub. Only a salted hash is saved, in `data/auth.js`. Sign in the same way from any browser. Sessions end after 30 minutes without activity. A static site cannot enforce a login on a server, so the login keeps casual visitors out and protects the members file by encryption; publishing still needs the GitHub token. Forgot the password? Delete `data/auth.js` from the repository and set up again (old saved members then cannot be decrypted, so keep CSV backups).
-
-**Members (shared in every browser):** saved as an AES-encrypted file `data/members.enc.json` in your repository. The key comes from your username and password in your browser, so the public repository only holds unreadable data and the same list opens after login in any browser. Reading needs only the login; saving needs the GitHub token. Add, edit, search, import/export CSV and JSON backups. Changing the login re-encrypts the file. Do not store ID numbers or sensitive details.
+**Members:** stored only in the browser you use (never in the public repository). Add, edit, search, import/export CSV, JSON backup, or back up to a separate PRIVATE repository (the panel refuses public ones). Browser data can be lost, so export regularly. Do not store ID numbers or sensitive details.
 
 **Limits:** the HTML pages' canonical/Open Graph address is set at build time, so changing the website address in Settings does not rewrite those tags.

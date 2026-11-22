@@ -37,11 +37,18 @@
       <a class="btn btn-primary" href="mock-tests.html">Explore Mock Tests <svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <a class="btn btn-glass" href="notes.html">Browse Study Notes</a>
     </div>
+    <div class="hero-note">
+      <span><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3"/></svg>Free tests and notes</span>
+      <span><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>Works on phones</span>
+      <span><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>No sign-up needed</span>
+    </div>
   </div>
   <div class="updates rise" style="--i:2" id="updates">
     <div class="updates-card">
-      <div class="updates-head"><h2 class="updates-title"><span class="live-dot" aria-hidden="true"></span>Latest updates</h2></div>
+      <div class="updates-head"><h2 class="updates-title"><span class="live-dot" aria-hidden="true"></span>Latest updates</h2>
+        <button type="button" class="upd-toggle" id="updates-toggle" aria-pressed="false">Pause</button></div>
       <div class="updates-viewport" id="updates-viewport" tabindex="0" role="region" aria-label="Latest updates, scrollable list"><ul class="updates-list" id="updates-list"></ul></div>
+      <p class="updates-state" id="updates-state" aria-live="polite"></p>
     </div>
   </div>
 </div></section>

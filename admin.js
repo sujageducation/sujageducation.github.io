@@ -56,7 +56,7 @@
   function b64(buf) { var b = new Uint8Array(buf), s = "", i; for (i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
   function b64t(str) { return b64(new TextEncoder().encode(str)); }
   function unb64t(s) { var bin = atob(s.replace(/\s/g, "")), u = new Uint8Array(bin.length), i; for (i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
-  A.b64t = b64t; A.unb64t = unb64t; A.unb64t_raw = function (s) { return s.replace(/\s/g, ""); }; A.fmtSize = fmtSize;
+  A.b64t = b64t; A.unb64t = unb64t; A.fmtSize = fmtSize;
 
   /* ---------- form builders (edit objects in place) ---------- */
   function fld(label, ctrl, hint, cls) { return h("label", { c: "f " + (cls || "") }, h("span", {}, label), ctrl, hint ? h("small", {}, hint) : null); }
@@ -173,7 +173,7 @@
     if (e.status === 404) return "Not found (404). Check owner, repository and branch, and that the token can access this repository.";
     return e.message || "Network error";
   }
-  A.gh = gh; A.friendly = friendly; A.saveG = function () { saveG(); };
+  A.gh = gh; A.friendly = friendly;
   function epath(p) { return p.split("/").map(encodeURIComponent).join("/"); }
   function putFile(path, b64content, message, repo) {
     repo = repo || G; var base = "/repos/" + repo.owner + "/" + repo.repo + "/contents/" + epath(path);
@@ -573,27 +573,21 @@
         h("div", { c: "cols" }, inp(soc, "facebook", { label: "Facebook link" }), inp(soc, "instagram", { label: "Instagram link" }), inp(soc, "youtube", { label: "YouTube link" })),
         inp(S, "contactEndpoint", { label: "Contact form endpoint (optional)", hint: "A Formspree-style URL. Empty keeps the form in not-connected mode." }), chk(S, "demoMode", "Show sample-content notices (turn off when you have your own real books)")),
       h("div", { c: "card" }, h("h3", {}, "Logo"), h("div", { c: "row" }, logo, btn("Upload new logo", function () { pickUpload("logo", function (path) { S.logo = path; logo.src = pendingSrc(path); touch(); }); })), h("small", { c: "mut" }, "The logo is shrunk to fit 256 pixels. Favicons are not changed.")),
-      h("div", { c: "card" }, h("h3", {}, "Default test instructions"), lines(D, "defaultInstructions", { label: "One per line", rows: 8, hint: "Shown on every test that has no custom instructions." })), A.auth ? A.auth.changeCard() : null]);
+      h("div", { c: "card" }, h("h3", {}, "Default test instructions"), lines(D, "defaultInstructions", { label: "One per line", rows: 8, hint: "Shown on every test that has no custom instructions." }))]);
   };
 
   /* ---------- boot ---------- */
-  function boot() {
-    loadAll().then(function () {
-    try { var d = JSON.parse(localStorage.getItem("sujag:admin:draft") || "null"); if (d && d.D && JSON.stringify(d.D) !== JSON.stringify(D) && confirm("You have unpublished edits saved in this browser from " + new Date(d.t).toLocaleString() + ". Restore them?")) { Object.keys(d.D).forEach(function (k) { D[k] = d.D[k]; }); } else if (d) localStorage.removeItem("sujag:admin:draft"); } catch (e) {}
-    refreshBar(); route();
-  }).catch(function (e) { setView(h("div", { c: "note bad" }, "Could not load the data files: " + e.message + ". Open the admin page from the same folder as the website.")); });
-    if (A.members && A.members.load) A.members.load();
-  }
-
   A.start = function () {
     buildNav(); loadG();
     document.getElementById("pubBtn").addEventListener("click", publish);
-    document.getElementById("outBtn").addEventListener("click", function () { A.logout(); });
     document.getElementById("dlBtn").addEventListener("click", download);
     var mb = document.getElementById("menuBtn"); mb.addEventListener("click", function () { var o = document.getElementById("side").classList.toggle("open"); mb.setAttribute("aria-expanded", o); });
     window.addEventListener("hashchange", route);
     window.addEventListener("beforeunload", function (e) { if (dirtyFiles().length || Object.keys(PEND).length) { e.preventDefault(); e.returnValue = ""; } });
-    (A.gate || function (d) { d(); })(boot);
+    loadAll().then(function () {
+      try { var d = JSON.parse(localStorage.getItem("sujag:admin:draft") || "null"); if (d && d.D && JSON.stringify(d.D) !== JSON.stringify(D) && confirm("You have unpublished edits saved in this browser from " + new Date(d.t).toLocaleString() + ". Restore them?")) { Object.keys(d.D).forEach(function (k) { D[k] = d.D[k]; }); } else if (d) localStorage.removeItem("sujag:admin:draft"); } catch (e) {}
+      refreshBar(); route();
+    }).catch(function (e) { setView(h("div", { c: "note bad" }, "Could not load the data files: " + e.message + ". Open the admin page from the same folder as the website.")); });
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(A.start, 0); }); else setTimeout(A.start, 0);
 })();

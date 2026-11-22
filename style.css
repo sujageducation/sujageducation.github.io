@@ -351,7 +351,6 @@ button { cursor: pointer; }
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
 .field label, .label { font-weight: 700; font-size: 0.9rem; color: var(--primary-900); }
 .field .opt { font-weight: 500; color: var(--subtle); }
-.field .req { font-weight: 500; color: var(--primary-600); font-size: .85em; }
 .field .help { font-size: 0.8rem; color: var(--muted); }
 .field .error { font-size: 0.82rem; color: var(--danger); font-weight: 600; display: none; }
 .field.has-error .error { display: block; }

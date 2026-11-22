@@ -5,8 +5,7 @@ window.SUJAG_ADMIN = {
   notesDir: "",
   booksDir: "",
   logoDir: "",
-  membersFile: "data-members.enc.json",
-  authFile: "data-auth.js",
+  membersFile: "members.json",
   pdfjs: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
   pdfWorker: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js",
   icons: ["book-open", "briefcase", "building", "calculator", "clipboard", "flag", "flask", "globe", "graduation-cap", "landmark", "monitor", "newspaper", "shield", "type"]
