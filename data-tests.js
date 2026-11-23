@@ -1691,7 +1691,7 @@ SUJAG.data.tests = [
     "category": "other-govt",
     "duration": 100,
     "difficulty": "Medium",
-    "featured": false,
+    "featured": true,
     "description": "Practice test with 100 questions.",
     "questions": [
       {
@@ -2796,6 +2796,10 @@ SUJAG.data.tests = [
       }
     ],
     "createdAt": "2026-11-23T10:37:30.398Z",
-    "updatedAt": "2026-11-23T10:37:30.398Z"
+    "updatedAt": "2026-11-23T11:34:27.180Z",
+    "groupUrl": "https://wa.me/923253061605",
+    "instructions": [
+      "جيڪي دوست UEP Field Production Trainee جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 Mock Tests ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي."
+    ]
   }
 ];
