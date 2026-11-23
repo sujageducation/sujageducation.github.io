@@ -13,18 +13,21 @@
 
   U.ready(function () {
     var id = U.qs("id"), test = S.get.test(id);
-    var root = $("#exam-root");
     if (!test) { fail("Test not found", "We could not find that test."); return; }
     var st = T.getProgress(test);
     if (!st) { window.location.replace("test-details.html?id=" + encodeURIComponent(id)); return; }
 
     var n = test.questions.length;
+    if (!n) { fail("No questions yet", "This test is awaiting its first questions."); return; }
     var cur = Math.min(Math.max(0, st.current || 0), n - 1);
-    var submitting = false, tick = null, lastShown = -1, warned = {};
+    var submitting = false, reviewing = false, tick = null, lastShown = -1, warned = {};
 
     S.setMeta({ title: test.title + " - Test" });
     $("#exam-title").textContent = test.title;
-    $("#exam-sub").textContent = (S.get.cat(test.category) || {}).name + " | " + n + " questions";
+    $("#exam-logo").src = S.site.logo || "logo-mark.png";
+    var kindName = test.kind === "past-paper" ? "Past paper" : test.kind === "custom" ? "Custom test" : "Mock test";
+    $("#exam-sub").textContent = kindName + " · " + ((S.get.cat(test.category) || {}).name || test.category);
+
 
     var els = {
       body: $("#q-body"), num: $("#q-num"), answered: $("#answered-count"), bar: $("#progress-bar"), barWrap: $("#progress-wrap"),
@@ -83,13 +86,14 @@
       var lastQ = cur === n - 1;
       els.next.disabled = false;
       els.next.classList.toggle("is-submit", lastQ);
-      if (lastQ) { if (!els.next.dataset.nextHtml) els.next.dataset.nextHtml = els.next.innerHTML; els.next.innerHTML = "Submit Test " + icon("check", 18); }
+      if (lastQ) { if (!els.next.dataset.nextHtml) els.next.dataset.nextHtml = els.next.innerHTML; els.next.innerHTML = "Submit test"; }
       else if (els.next.dataset.nextHtml) els.next.innerHTML = els.next.dataset.nextHtml;
       els.clear.hidden = st.answers[cur] === null;
       paintGrid();
     }
 
     function go(i, focusQuestion) {
+      if (submitting || !remaining()) { if (!submitting) submit(true); return; }
       if (i < 0 || i >= n || i === cur) { if (focusQuestion) $("#q-text").focus(); return; }
       var dir = i > cur ? 1 : -1;
       cur = i; save(); render(dir);
@@ -98,7 +102,8 @@
     }
 
     els.body.addEventListener("change", function (e) {
-      if (e.target.name !== "answer") return;
+      if (submitting || e.target.name !== "answer") return;
+      if (!remaining()) { submit(true); return; }
       st.answers[cur] = parseInt(e.target.value, 10);
       save();
       Array.prototype.forEach.call(els.body.querySelectorAll(".opt"), function (l) { l.classList.toggle("is-selected", l.querySelector("input").checked); });
@@ -106,6 +111,7 @@
       paintGrid();
     });
     els.clear.addEventListener("click", function () {
+      if (submitting || !remaining()) { if (!submitting) submit(true); return; }
       st.answers[cur] = null; save(); render(0);
       var first = els.body.querySelector("input"); if (first) first.focus();
     });
@@ -139,7 +145,7 @@
     /* ----- Timer ----- */
     function fmt(sec) {
       var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
-      var mm = (h ? String(m).padStart(2, "0") : String(m).padStart(2, "0")), ss = String(s).padStart(2, "0");
+      var mm = String(m).padStart(2, "0"), ss = String(s).padStart(2, "0");
       return (h ? h + ":" : "") + mm + ":" + ss;
     }
     function updateTimer() {
@@ -157,41 +163,68 @@
     }
 
     /* ----- Submit ----- */
-    function submit(auto) {
+    async function submit(auto) {
       if (submitting) return;
-      submitting = true;
-      clearInterval(tick);
+      submitting = true; clearInterval(tick);
+      S.ui.closeAll(); closeSheet(false);
       window.removeEventListener("beforeunload", warnLeave);
-      $("#submit-top").disabled = true;
+      var msg = $("#exam-delivery");
+      msg.hidden = false;
+      msg.textContent = auto ? "Time is up. Submitting your answers…" : "Submitting your answers…";
+      els.next.textContent = "Submitting…";
+      document.querySelectorAll(".exam-main button, #q-body input").forEach(function (el) { el.disabled = true; });
       var result = T.finish(test, st, auto);
-      var go = function () { window.location.replace("test-result.html?rid=" + encodeURIComponent(result.rid)); };
-      if (auto) {
-        S.ui.modal({
-          title: "Time is up", message: "Your test was submitted automatically. Opening your result now.", dismissible: false,
-          actions: [{ label: "View result", value: true, variant: "btn-primary" }]
-        }).then(go);
-        setTimeout(go, 2500);
-      } else go();
+      var sent = window.SujagResults.state(result) === "sent" || await window.SujagResults.sendResult(result);
+      if (sent || result.queueSaved) T.clearFinishedProgress(test.id, st.rid);
+      if (navigator.onLine !== false && T.getResult(result.rid)) {
+        window.location.replace("test-result.html?rid=" + encodeURIComponent(result.rid)); return;
+      }
+      // An offline browser cannot navigate to a page it has never opened.
+      var card = document.querySelector(".q-card");
+      card.innerHTML = '<h1>Your result</h1><p></p><p role="status"></p><button type="button" class="btn btn-primary">Download PDF</button>';
+      card.querySelector("p").textContent = result.title + " · " + result.marks + " / " + result.total;
+      var status = card.querySelector("[role=status]");
+      status.textContent = sent ? "Your result is saved in the admin panel." : "Waiting to send your result. Keep this page open or reopen the site when connected.";
+      window.addEventListener("sujag-result-delivery", function (event) {
+        if (event.detail.rid === result.rid && event.detail.state === "sent") {
+          status.textContent = "Your result is saved in the admin panel."; T.clearFinishedProgress(test.id, st.rid);
+        }
+      });
+      card.querySelector("button").onclick = function () {
+        window.SujagReport.download(S.site, result.title, [Object.assign({}, result.candidate, { marks: result.marks, total: result.total })])
+          .catch(function () { S.ui.toast("The PDF could not be downloaded. Please try again.", "error"); });
+      };
     }
 
     function askSubmit() {
-      if (submitting) return;
-      var done = answeredCount(), left = n - done, rem = remaining();
-      var html = "<p>You are about to submit <strong>" + esc(test.title) + "</strong>. You cannot change your answers after this.</p>" +
-        '<ul class="key-facts" style="margin-top:8px"><li><span>Answered</span><span>' + done + "</span></li><li><span>Not answered</span><span>" + left + "</span></li><li><span>Time left</span><span>" + fmt(rem) + "</span></li></ul>" +
-        (left ? '<p style="margin:14px 0 0;color:var(--warn);font-weight:600">' + U.plural(left, "question") + (left === 1 ? " is" : " are") + " still unanswered.</p>" : "");
-      S.ui.modal({
-        title: "Submit your test?", html: html, dismissValue: false,
-        actions: [{ label: "Keep working", value: false, variant: "btn-ghost" }, { label: "Submit Test", value: true, variant: "btn-primary" }]
-      }).then(function (ok) { if (ok) submit(false); });
+      if (submitting || reviewing || cur !== n - 1) return;
+      if (!remaining()) { submit(true); return; }
+      reviewing = true;
+      var done = answeredCount(), left = n - done;
+      var text = left ? "You have answered " + done + " of " + n + " questions. " + U.plural(left, "unanswered question") + " will receive zero marks."
+        : (n === 1 ? "You have answered the question." : "You have answered all " + n + " questions.");
+      var actions = [{ label: left ? "Review unanswered" : "Keep working", value: left ? "review" : false, variant: "btn-ghost" },
+        { label: "Submit test", value: true, variant: "btn-primary" }];
+      S.ui.modal({ title: "Ready to submit?", message: text + " Submit when you are happy with your answers.", dismissValue: false,
+        focus: ".btn-ghost", actions: actions }).then(function (choice) {
+        reviewing = false;
+        if (submitting) return;
+        if (!remaining()) { submit(true); return; }
+        if (choice === true) submit(false);
+        else if (choice === "review") go(st.answers.indexOf(null), true);
+      });
     }
-    $("#submit-top").addEventListener("click", askSubmit);
-    $("#submit-panel").addEventListener("click", function () { closeSheet(false); askSubmit(); });
 
     function warnLeave(e) { if (!submitting && answeredCount() > 0) { e.preventDefault(); e.returnValue = ""; } }
     window.addEventListener("beforeunload", warnLeave);
 
     /* ----- Start ----- */
+    window.addEventListener("storage", function (event) {
+      if (!submitting && event.key === "sujag:results" && T.getResult(st.rid)) {
+        submitting = true; clearInterval(tick); window.removeEventListener("beforeunload", warnLeave);
+        window.location.replace("test-result.html?rid=" + encodeURIComponent(st.rid));
+      }
+    });
     buildGrid();
     render(0);
     if (remaining() <= 0) { submit(true); return; }

@@ -17,6 +17,31 @@
   function norm(u) { return String(u || "").trim().toLowerCase(); }
   function makeHash(u, p, saltHex, iter) { return pbkdf2(norm(u) + ":" + p, unhex(saltHex), iter, 256).then(hex); }
   function makeKey(u, p, saltHex) { return pbkdf2(norm(u) + ":" + p + "|vault", unhex(saltHex), 100000, 256).then(hex); }
+  var proof = "", proofHash = "", loginHash = "";
+  async function resultsCredentials(keyHex) {
+    var key = await crypto.subtle.importKey("raw", unhex(keyHex), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    var token = hex(await crypto.subtle.sign("HMAC", key, enc.encode("SUJAG Education results admin v1")));
+    var verifier = hex(await crypto.subtle.digest("SHA-256", enc.encode(token)));
+    return { token: token, verifier: verifier };
+  }
+  A.resultProof = function () { return proof; };
+  // Upgrade an older published login once. GitHub credentials go only to GitHub.
+  A.linkResultsLogin = async function () {
+    if (!proof || !loginHash || !A.G.token) return false;
+    var g = A.G;
+    var path = "/repos/" + encodeURIComponent(g.owner) + "/" + encodeURIComponent(g.repo) + "/contents/" + A.epath(C.authFile);
+    var file = await A.gh("GET", path + "?ref=" + encodeURIComponent(g.branch));
+    var source = A.unb64t(file.content);
+    var match = /SUJAG\.auth\s*=\s*(\{[\s\S]*?\})\s*;?\s*$/.exec(source);
+    if (!match) throw new Error("Could not read the published CMS login.");
+    var auth = JSON.parse(match[1]);
+    if (auth.hash !== loginHash) throw new Error("Your CMS login has changed. Please sign in again.");
+    if (auth.resultsVerifier === proofHash) return true;
+    if (auth.resultsVerifier) throw new Error("Sign in with the current CMS login before linking results.");
+    auth.resultsVerifier = proofHash;
+    await A.gh("PUT", path, { message: "Link the existing CMS login to test results", content: A.b64t(authJs(auth)), sha: file.sha, branch: g.branch });
+    return true;
+  };
   function useKey(keyHex) { return crypto.subtle.importKey("raw", unhex(keyHex), "AES-GCM", false, ["encrypt", "decrypt"]).then(function (k) { aes = k; }); }
   var V = (A.vault = {
     ready: function () { return !!aes; },
@@ -37,8 +62,9 @@
     document.body.appendChild(g); var f = g.querySelector("input"); if (f) f.focus(); return g;
   }
   function enter(keyHex, user, done) {
-    return useKey(keyHex).then(function () {
-      who = user; try { sessionStorage.setItem("sujag:admin:sess", JSON.stringify({ k: keyHex, u: user, t: Date.now() })); } catch (e) {}
+    return Promise.all([useKey(keyHex), resultsCredentials(keyHex)]).then(function (parts) {
+      proof = parts[1].token; proofHash = parts[1].verifier;
+      who = user; try { sessionStorage.setItem("sujag:admin:sess", JSON.stringify({ k: keyHex, u: user, h: loginHash, t: Date.now() })); } catch (e) {}
       var g = document.getElementById("gate"); if (g) g.remove(); document.body.classList.add("authed"); startIdle(); done();
     });
   }
@@ -59,7 +85,7 @@
       if (L.until && now < L.until) { show("Too many attempts. Try again in " + Math.ceil((L.until - now) / 1000) + " seconds."); return; }
       makeHash(u.value, p.value, auth.salt, auth.iter || ITER).then(function (hh) {
         if (hh !== auth.hash) { var n = (L.n || 0) + 1; setLock({ n: n, until: n >= 5 ? now + Math.min(3600, 30 * Math.pow(2, n - 5)) * 1000 : 0 }); show("Wrong username or password."); return; }
-        setLock({}); return makeKey(u.value, p.value, auth.salt).then(function (k) { return enter(k, norm(u.value), done); });
+        loginHash = auth.hash; setLock({}); return makeKey(u.value, p.value, auth.salt).then(function (k) { return enter(k, norm(u.value), done); });
       });
     });
     function show(t) { msg.style.display = "block"; msg.textContent = t; }
@@ -78,8 +104,11 @@
       A.gh("GET", "/repos/" + G.owner + "/" + G.repo).then(function (rp) {
         if (!(rp.permissions && rp.permissions.push)) throw new Error("This token cannot write to the repository. It needs Contents: Read and write.");
         return makeHash(u.value, p.value, salt, ITER);
-      }).then(function (hh) { return A.putFile(C.authFile, A.b64t(authJs({ salt: salt, hash: hh, iter: ITER })), "Set admin login"); })
-        .then(function () { A.saveG(); return makeKey(u.value, p.value, salt); }).then(function (k) { return enter(k, norm(u.value), done); })
+      }).then(async function (hh) {
+        var k = await makeKey(u.value, p.value, salt), credentials = await resultsCredentials(k);
+        await A.putFile(C.authFile, A.b64t(authJs({ salt: salt, hash: hh, iter: ITER, resultsVerifier: credentials.verifier })), "Set admin login");
+        loginHash = hh; A.saveG(); return enter(k, norm(u.value), done);
+      })
         .catch(function (er) { show(A.friendly ? A.friendly(er) : er.message); });
     });
     function show(t) { msg.style.display = "block"; msg.textContent = t; }
@@ -87,7 +116,7 @@
   }
   A.gate = function (done) {
     if (!secure()) { gateBox("Secure connection needed", h("p", {}, "The login needs HTTPS. Open the admin page from your https:// website address (GitHub Pages), not from a file on your phone.")); return; }
-    try { var s = JSON.parse(sessionStorage.getItem("sujag:admin:sess") || "null"); if (s && Date.now() - s.t < IDLE) { enter(s.k, s.u, done); return; } } catch (e) {}
+    try { var s = JSON.parse(sessionStorage.getItem("sujag:admin:sess") || "null"); if (s && Date.now() - s.t < IDLE) { loginHash = s.h || ""; enter(s.k, s.u, done); return; } } catch (e) {}
     loadAuth().then(function (auth) { auth ? loginUI(auth, done) : setupUI(done); });
   };
 
@@ -100,10 +129,10 @@
         A.btn("Change login", function () {
           if (!A.G.token) { A.toast("Connect GitHub first.", true); return; } if (p.value.length < 10 || p.value !== p2.value) { A.toast("Passwords must match and be 10+ characters.", true); return; }
           var salt = hex(crypto.getRandomValues(new Uint8Array(16))), nk;
-          makeHash(u.value, p.value, salt, ITER).then(function (hh) { return makeKey(u.value, p.value, salt).then(function (k) { nk = k; return hh; }); }).then(function (hh) {
-            var prev = aes;
+          makeHash(u.value, p.value, salt, ITER).then(function (hh) { return makeKey(u.value, p.value, salt).then(function (k) { nk = k; return hh; }); }).then(async function (hh) {
+            var credentials = await resultsCredentials(nk), prev = aes;
             return A.members.readyToRekey().then(function (list) {
-              return useKey(nk).then(function () { return A.members.saveNow(); }).then(function () { return A.putFile(C.authFile, A.b64t(authJs({ salt: salt, hash: hh, iter: ITER })), "Change admin login"); }).catch(function (e) { aes = prev; throw e; });
+              return useKey(nk).then(function () { return A.members.saveNow(); }).then(function () { return A.putFile(C.authFile, A.b64t(authJs({ salt: salt, hash: hh, iter: ITER, resultsVerifier: credentials.verifier })), "Change admin login"); }).catch(function (e) { aes = prev; throw e; });
             });
           }).then(function () { who = norm(u.value); try { sessionStorage.removeItem("sujag:admin:sess"); } catch (e) {} out.className = "note"; out.textContent = "Login changed. Sign in again."; setTimeout(A.logout, 1500); })
             .catch(function (e) { out.className = "note bad"; out.textContent = (A.friendly ? A.friendly(e) : e.message); });

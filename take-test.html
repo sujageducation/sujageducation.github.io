@@ -27,10 +27,9 @@
 </head>
 <body class="exam" data-layout="exam" data-page="take-test">
 <header class="exam-header"><div class="container exam-header-inner">
-  <a class="brand" href="index.html" aria-label="SUJAG Education home"><img src="logo-mark.png" alt="" width="35" height="38"></a>
+  <a class="brand" href="index.html" aria-label="SUJAG Education home"><img id="exam-logo" src="logo-mark.png" alt="" width="35" height="38"></a>
   <div class="exam-title"><strong id="exam-title">Loading</strong><span id="exam-sub"></span></div>
-  <div class="timer" id="timer" role="timer" aria-label="Time remaining"><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span id="timer-text">--:--</span></div>
-  <button type="button" class="btn btn-primary btn-sm" id="submit-top">Submit</button>
+  <div class="timer" id="timer" role="timer" aria-label="Time remaining"><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="timer-copy"><small>Time left</small><span id="timer-text">--:--</span></span></div>
 </div></header>
 <main id="main" class="exam-main"><div class="container exam-layout">
   <section class="q-card" aria-label="Question">
@@ -38,6 +37,7 @@
     <div class="progress" id="progress-wrap" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-bar"></span></div>
     <div class="q-body" id="q-body"></div>
     <div class="q-tools"><button type="button" class="link-btn" id="clear" hidden>Clear my answer</button></div>
+    <p class="exam-delivery" id="exam-delivery" role="status" hidden></p>
     <div class="q-actions">
       <button type="button" class="btn btn-ghost" id="prev"><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Previous</button>
       <button type="button" class="btn btn-glass btn-nav" id="open-sheet" aria-expanded="false" aria-controls="nav-panel"><svg class="icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Questions</button>
@@ -49,7 +49,6 @@
     <h2>Questions</h2><p class="sub" id="nav-sub"></p>
     <div class="q-grid" id="q-grid"></div>
     <ul class="legend"><li><i class="l-current"></i>Current question</li><li><i class="l-answered"></i>Answered</li><li><i></i>Not answered</li></ul>
-    <button type="button" class="btn btn-primary btn-block" id="submit-panel">Submit Test</button>
     <p style="margin:14px 0 0;font-size:.82rem"><a href="mock-tests.html" id="exit-link">Leave test (progress is kept)</a></p>
   </aside>
 </div></main>
@@ -59,8 +58,10 @@
   <script src="data-notes.js"></script>
   <script src="data-books.js"></script>
   <script src="main.js"></script>
+  <script src="result-service.js"></script>
   <script src="cards.js"></script>
   <script src="tests.js"></script>
+  <script src="result-report.js"></script>
   <script src="test-engine.js"></script>
 </body>
 </html>

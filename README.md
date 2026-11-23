@@ -1,8 +1,7 @@
 # SUJAG Education
 
 A static, multi-page educational website with free mock tests, free study notes and a books store.
-Built with plain HTML, CSS and JavaScript. No build step, no Node.js, no database and no paid hosting
-are needed, so it can be published directly on GitHub Pages.
+The public pages use plain HTML, CSS and JavaScript and can be published directly on GitHub Pages. Submitted test results use the connected Sujag Education database.
 
 > All tests, notes and books in this package are **sample content** written to demonstrate the site.
 > They are not official past papers and the books are not real products. Replace them with your own.
@@ -172,26 +171,15 @@ message was **not** sent, and offers to copy it.
 
 ---
 
-## 7. How test data is stored (and its limits)
+## 7. Test results
 
-The site is static, so there are no accounts and no server database. Test state is kept in the
-browser's `localStorage`:
+This ZIP is ready for the Sujag Education GitHub Pages project. Publish its public files at the root of the site. Keep any existing `data-auth.js` and encrypted members file. Use your usual CMS login at `admin.html`. For a new installation, complete the site's existing first-time admin setup.
 
-- `sujag:progress:<testId>`: answers, current question and the fixed end time of an unfinished attempt.
-- `sujag:results`: the latest 30 finished results, including the questions and the selected answers.
+Choose **Test results** in the admin panel, select a test and choose **Download PDF**. The PDF includes every submitted attempt for the selected test, including rows beyond the current screen. Its header uses the website logo, name, address and test title. The three columns are Name, City and Score. The website address in Settings overrides the published site's address when configured.
 
-What this means:
+All test types, including past papers and tests generated from TXT or PDF, submit to the dedicated Sujag Education results service. Candidates need no account. Each attempt has a unique ID. The service acknowledges the database write before the page reports success. An offline attempt queues on its device and retries when the site is open and connectivity returns. Earlier browser-only results remain available as local review history.
 
-- Data stays on **that browser on that device**. It does not sync across devices.
-- Clearing browser data, using a private window or some browser "clean up" tools **deletes** it.
-- The site tells users this on the result page, FAQ and privacy policy.
-- The candidate name, city and phone are optional and only appear on that person's own result.
-  Do not collect sensitive information with this setup.
-- The timer counts to a stored end time, so refreshing does not reset it. Because everything runs in
-  the browser, a technically skilled user could change their own saved time or read the answers
-  from the page source. That is fine for free practice tests; it is **not suitable for graded or
-  high-stakes exams**. For that you need a server.
-- If storage is blocked, the site tells the user instead of failing silently.
+The browser keeps in-progress answers and a fixed deadline, plus up to 30 personal answer reviews. The database keeps submitted summaries until an administrator deletes them. The CMS verifies access against the login published in `data-auth.js` on the `main` branch of `salucommunity/sujageducation.github.io`. The usual CMS setup or password-change flow publishes a results verifier automatically. For a login created by an older panel, sign in with the existing GitHub connection once and open **Test results** to link it. The results service URL is already configured.
 
 ## 8. Mock test behaviour
 
@@ -201,7 +189,7 @@ What this means:
 - The countdown continues after a refresh. It warns at 5 minutes and 1 minute left. When it reaches zero the test is submitted automatically.
 - Submitting asks for confirmation (and lists unanswered questions). Double submission is blocked and exactly one result is saved.
 - The result page shows marks, percentage, correct, incorrect and unanswered counts, time taken, a visual score ring and bar,
-  a filterable answer review with explanations, and a Retake button.
+  a downloadable PDF, a filterable answer review with explanations and a retake link.
 
 ## 9. Search
 
@@ -264,8 +252,8 @@ Open `admin.html` on your site (for example `https://yourname.github.io/admin.ht
 
 **Security, honestly:** a static site has no real login. Anyone can open admin.html, but nobody can publish without your token, because GitHub checks it. Do not share the token.
 
-**Admin login:** the first time you open admin.html you create a username and password (10+ characters, a long phrase is best) and connect GitHub. Only a salted hash is saved, in `data/auth.js`. Sign in the same way from any browser. Sessions end after 30 minutes without activity. A static site cannot enforce a login on a server, so the login keeps casual visitors out and protects the members file by encryption; publishing still needs the GitHub token. Forgot the password? Delete `data/auth.js` from the repository and set up again (old saved members then cannot be decrypted, so keep CSV backups).
+**Admin login:** the first time you open admin.html you create a username and password (10+ characters, a long phrase is best) and connect GitHub. The CMS publishes the salted password hash and the results verifier in `data-auth.js`. Sign in the same way from any browser. Sessions end after 30 minutes without activity. A static site cannot enforce a login on a server, so the login keeps casual visitors out and protects the members file by encryption; publishing still needs the GitHub token. Forgot the password? Delete `data-auth.js` from the repository and set up again (old saved members then cannot be decrypted, so keep CSV backups).
 
-**Members (shared in every browser):** saved as an AES-encrypted file `data/members.enc.json` in your repository. The key comes from your username and password in your browser, so the public repository only holds unreadable data and the same list opens after login in any browser. Reading needs only the login; saving needs the GitHub token. Add, edit, search, import/export CSV and JSON backups. Changing the login re-encrypts the file. Do not store ID numbers or sensitive details.
+**Members (shared in every browser):** saved as an AES-encrypted file `data-members.enc.json` in your repository. The key comes from your username and password in your browser, so the public repository only holds unreadable data and the same list opens after login in any browser. Reading needs only the login; saving needs the GitHub token. Add, edit, search, import/export CSV and JSON backups. Changing the login re-encrypts the file. Do not store ID numbers or sensitive details.
 
 **Limits:** the HTML pages' canonical/Open Graph address is set at build time, so changing the website address in Settings does not rewrite those tags.

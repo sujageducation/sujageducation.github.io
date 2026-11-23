@@ -25,7 +25,7 @@
   function historyPage() {
     S.setMeta({ title: "Your Results", description: "Test results saved in this browser." });
     var all = T.getResults();
-    $("#result-head").innerHTML = '<div class="container"><h1>Your results</h1><p class="lead">Results saved on this device. Online collection requires a shared service.</p></div>';
+    $("#result-head").innerHTML = '<div class="container"><h1>Your results</h1><p class="lead">Your personal review history on this device.</p></div>';
     if (!all.length) { $("#result-main").innerHTML = '<div class="container">' + S.cards.empty("No results yet", "Finish a mock test and your result will appear here.") +
       '<p style="text-align:center;margin-top:18px"><a class="btn btn-primary" href="mock-tests.html">Browse mock tests</a></p></div>'; return; }
     $("#result-main").innerHTML = '<div class="container"><div class="panel"><div class="table-wrap"><table class="history-table"><thead><tr><th>Test</th><th>Date</th><th>Score</th><th>%</th><th><span class="visually-hidden">View</span></th></tr></thead><tbody>' +
@@ -35,7 +35,7 @@
       }).join("") + '</tbody></table></div></div>' +
       '<div class="row" style="margin-top:18px"><button type="button" class="btn btn-ghost" id="clear-all">' + icon("trash", 18) + " Clear saved results</button></div></div>";
     $("#clear-all").addEventListener("click", function () {
-      S.ui.confirm({ title: "Clear all saved results?", message: "This removes every result stored in this browser. It cannot be undone.", confirmText: "Clear results", danger: true })
+      S.ui.confirm({ title: "Clear all saved results?", message: "This clears your review history from this device. Submitted results remain in the admin panel.", confirmText: "Clear results", danger: true })
         .then(function (ok) {
           if (!ok) return;
           U.store.remove("sujag:results"); U.store.remove("sujag:results", "session");
@@ -70,8 +70,8 @@
       '<div class="result-info"><h1>' + esc(r.title) + "</h1>" +
       '<p class="who">' + (who ? "Candidate: " + esc(who) + " &middot; " : "") + esc(cat ? cat.name : "") + " &middot; " + esc(U.fmtDate(r.submittedAt, true)) + (r.autoSubmitted ? " &middot; Submitted automatically when time ended" : "") + "</p>" +
       '<p class="summary">' + esc(summaryText(r.percent)) + '</p><div class="row">' +
-      '<button type="button" class="btn btn-ghost" id="print-result">Save PDF</button><button type="button" class="btn btn-primary" id="show-review">' + icon("eye", 18) + " Review Answers</button>" +
-      '<a class="btn btn-glass" href="test-details.html?id=' + encodeURIComponent(r.testId) + "&retake=" + encodeURIComponent(r.rid) + '">' + icon("refresh", 18) + " Retake Test</a></div></div></div></div>";
+      '<button type="button" class="btn btn-primary" id="download-result">' + icon("download", 18) + ' Download PDF</button></div>' +
+      '<p class="delivery-note" id="delivery-note" role="status"></p></div></div></div>';
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
     var timeLeft = r.duration * 60 - r.timeTaken;
@@ -85,11 +85,35 @@
       '<div class="stat"><span>Time taken</span><strong style="font-size:1.25rem">' + esc(U.fmtDuration(r.timeTaken)) + "</strong></div></div>" +
       '<div class="split-bar" role="img" aria-label="' + r.correct + " correct, " + r.wrong + " incorrect, " + r.unanswered + ' unanswered"><span class="s-ok" data-w="' + pct(r.correct) + '"></span><span class="s-bad" data-w="' + pct(r.wrong) + '"></span><span class="s-skip" data-w="' + pct(r.unanswered) + '"></span></div>' +
       '<div class="split-legend"><span><i style="background:var(--accent)"></i>Correct</span><span><i style="background:#d9695f"></i>Incorrect</span><span><i style="background:#c5ccc8"></i>Unanswered</span></div></section>' +
-      '<section id="review" class="section-sm" hidden aria-labelledby="rev-h"><div class="review-head"><h2 id="rev-h" style="margin:0">Review answers</h2>' +
+      '<details id="answer-review" class="section-sm"><summary>Review answers and explanations</summary><div class="review-head">' +
       '<div class="filter-row" style="margin:0" id="rev-filter"><button class="chip" type="button" data-f="all" aria-pressed="true">All</button><button class="chip" type="button" data-f="ok" aria-pressed="false">Correct</button><button class="chip" type="button" data-f="bad" aria-pressed="false">Incorrect</button><button class="chip" type="button" data-f="skip" aria-pressed="false">Unanswered</button></div></div>' +
-      '<div class="review-list" id="rev-list">' + r.questions.map(function (q, i) { return reviewItem(q, i, r.answers[i]); }).join("") + "</div></section>" +
+      '<div class="review-list" id="rev-list">' + r.questions.map(function (q, i) { return reviewItem(q, i, r.answers[i]); }).join("") + "</div></details>" +
       '<section class="section-sm" id="next-steps"></section>' +
-      '<div class="notice"><span>' + icon("info", 18) + "</span><p>This result is saved only in this browser on this device. It is not uploaded anywhere, and clearing your browser data will remove it.</p></div></div>";
+      "</div>";
+
+    var download = $("#download-result"), delivery = $("#delivery-note");
+    function showDelivery(state) {
+      var message = state === "sent" ? "Your result is saved in the Sujag Education admin panel."
+        : state === "rejected" ? "The admin panel could not accept this record. Download your PDF and contact Sujag Education."
+        : state === "pending" ? "Your result is saved on this device and is waiting to send. Reopen this site when you are online to finish sending it."
+        : "This earlier attempt is saved on this device.";
+      delivery.textContent = (r.autoSubmitted ? "Time expired. " : "") + message;
+    }
+    showDelivery(window.SujagResults.state(r));
+    window.addEventListener("sujag-result-delivery", function (event) {
+      if (event.detail.rid === r.rid) showDelivery(event.detail.state);
+    });
+    if (r.delivery === "pending" && window.SujagResults.state(r) !== "sent") {
+      window.SujagResults.enqueue(r);
+      window.SujagResults.flush();
+    }
+    download.onclick = async function () {
+      download.disabled = true; download.textContent = "Preparing PDF…";
+      try {
+        await window.SujagReport.download(S.site, r.title, [Object.assign({}, r.candidate, {marks:r.marks, total:r.total})]);
+      } catch (error) { S.ui.toast(error.message || "The PDF could not be downloaded. Please try again.", "error"); }
+      finally { download.disabled = false; download.innerHTML = icon("download", 18) + " Download PDF"; }
+    };
 
     // Animate ring and bar once on load
     requestAnimationFrame(function () {
@@ -97,17 +121,6 @@
       U.$$(".split-bar span").forEach(function (s) { s.style.width = s.getAttribute("data-w") + "%"; });
     });
 
-    var review = $("#review"), btn = $("#show-review");
-    var printBtn=$("#print-result"); if(printBtn) printBtn.addEventListener("click",function(){window.print();});
-    btn.addEventListener("click", function () {
-      var open = review.hidden;
-      review.hidden = !open;
-      btn.innerHTML = icon("eye", 18) + (open ? " Hide Review" : " Review Answers");
-      btn.setAttribute("aria-expanded", String(open));
-      if (open) review.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    btn.setAttribute("aria-expanded", "false");
-    btn.setAttribute("aria-controls", "review");
     $("#rev-filter").addEventListener("click", function (e) {
       var b = e.target.closest("[data-f]"); if (!b) return;
       var f = b.getAttribute("data-f");
@@ -123,6 +136,7 @@
       (others.length > 1 ? '<h2>Your attempts on this test</h2><div class="panel"><div class="table-wrap"><table class="history-table"><thead><tr><th>Date</th><th>Score</th><th>%</th></tr></thead><tbody>' +
         others.map(function (x) { return '<tr class="' + (x.rid === r.rid ? "is-current" : "") + '"><td>' + esc(U.fmtDate(x.submittedAt, true)) + "</td><td>" + x.marks + " / " + x.total + "</td><td>" + T.fmtPct(x.percent) + "%</td></tr>"; }).join("") + "</tbody></table></div></div>" : "") +
       '<div class="section-head" style="margin-top:36px"><h2>Keep practising</h2><a class="link-arrow" href="mock-tests.html">All mock tests ' + icon("arrow-right", 18) + '</a></div><div class="grid">' + more.map(S.cards.test).join("") + "</div>";
+    if (test) $("#next-steps").insertAdjacentHTML("afterbegin", '<p><a href="test-details.html?id=' + encodeURIComponent(r.testId) + '&amp;retake=' + encodeURIComponent(r.rid) + '">Retake this test</a></p>');
     if (!test) $("#next-steps").insertAdjacentHTML("afterbegin", '<div class="notice notice-warn" style="margin-bottom:20px"><span>' + icon("alert", 18) + "</span><p>This test is no longer in the catalogue, so Retake is unavailable. Your saved review above is still complete.</p></div>");
   }
 

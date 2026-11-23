@@ -31,14 +31,24 @@
   T.getProgress = function (test) {
     var st = U.store.get(T.progressKey(test.id), null);
     if (!st || !Array.isArray(st.answers) || st.answers.length !== test.questions.length || typeof st.endAt !== "number") return null;
+    if (!st.rid) {
+      // Old in-progress attempts use the same ID after a refresh or in a second tab.
+      st.rid = "v1-" + st.startedAt.toString(36) + "-" + encodeURIComponent(test.id).replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 120);
+      U.store.set(T.progressKey(test.id), st);
+    }
     return st;
   };
   T.clearProgress = function (id) { U.store.remove(T.progressKey(id)); };
 
+  T.clearFinishedProgress = function (id, rid) {
+    var active = U.store.get(T.progressKey(id), null);
+    if (active && active.rid === rid) T.clearProgress(id);
+  };
+
   T.startAttempt = function (test, candidate) {
     var now = Date.now();
     var st = {
-      v: 1, testId: test.id, startedAt: now, endAt: now + test.duration * 60000,
+      v: 2, rid: crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function (b) { return b.toString(16).padStart(2, "0"); }).join(""), testId: test.id, startedAt: now, endAt: now + test.duration * 60000,
       answers: test.questions.map(function () { return null; }), current: 0, candidate: candidate || {}
     };
     return U.store.set(T.progressKey(test.id), st) ? st : null;
@@ -60,6 +70,7 @@
   T.saveResult = function (r) {
     var list = U.store.get(RESULTS_KEY, []);
     if (!Array.isArray(list)) list = [];
+    list = list.filter(function (item) { return item.rid !== r.rid; });
     list.unshift(r);
     list = list.slice(0, MAX_RESULTS);
     if (U.store.set(RESULTS_KEY, list)) return true;
@@ -69,10 +80,12 @@
 
   /* Turns a finished attempt into a saved result and returns it. */
   T.finish = function (test, st, auto) {
-    var now = Date.now();
+    var existing = T.getResult(st.rid);
+    if (existing) return existing;
+    var now = auto ? Math.min(st.endAt, Date.now()) : Date.now();
     var s = T.score(test.questions, st.answers);
     var result = {
-      rid: "r" + now.toString(36) + Math.random().toString(36).slice(2, 5),
+      rid: st.rid, delivery: "pending",
       testId: test.id, title: test.title, category: test.category,
       candidate: st.candidate || {},
       total: s.total, correct: s.correct, wrong: s.wrong, unanswered: s.unanswered, marks: s.marks, percent: s.percent,
@@ -81,8 +94,12 @@
       timeTaken: Math.min(Math.round((now - st.startedAt) / 1000), test.duration * 60),
       duration: test.duration, autoSubmitted: !!auto, submittedAt: now
     };
-    T.saveResult(result);
-    T.clearProgress(test.id);
+    var stored = T.saveResult(result);
+    var queued = window.SujagResults.enqueue(result);
+    if (stored && queued) T.clearFinishedProgress(test.id, st.rid);
+    // Delivery or the exam page can still recover when device storage fills.
+    result.deviceSaved = stored;
+    result.queueSaved = queued;
     return result;
   };
 
@@ -95,6 +112,7 @@
     return items.filter(function (t) {
       if (f.cat && t.category !== f.cat) return false;
       if (f.diff && t.difficulty !== f.diff) return false;
+      if (f.kind && (t.kind || "mock") !== f.kind) return false;
       return U.matches(f.q, [t.title, t.description, catName(t.category), t.difficulty].join(" "));
     });
   }
@@ -119,9 +137,11 @@
       return cards.category(c, i).replace('class="card', 'style="--i:' + Math.min(i, 8) + '" class="rise card');
     }).join("");
 
-    var state = { q: U.qs("q") || "", cat: U.qs("cat") || "", diff: "" };
+    var state = { q: U.qs("q") || "", cat: U.qs("cat") || "", diff: "", kind: U.qs("type") || "" };
     if (!S.get.cat(state.cat) || S.data.testGroups.some(function (g) { return g.id === state.cat; })) state.cat = "";
     var search = $("#t-search"), diff = $("#t-diff"), chips = $("#t-chips"), list = $("#t-list"), count = $("#t-count");
+    var kind = $("#t-kind"); kind.value = state.kind; state.kind = kind.value;
+    kind.addEventListener("change", function () { state.kind = kind.value; update(); });
     search.value = state.q;
     diff.innerHTML = '<option value="">All difficulties</option>' + difficulties().map(function (d) { return '<option>' + esc(d) + "</option>"; }).join("");
 
@@ -142,7 +162,7 @@
       state.cat = b.getAttribute("data-cat"); renderChips(); update();
     });
     $("#t-clear").addEventListener("click", function () {
-      state.q = ""; state.cat = ""; state.diff = ""; search.value = ""; diff.value = ""; renderChips(); update(); search.focus();
+      state.q = ""; state.cat = ""; state.diff = ""; state.kind = ""; kind.value = ""; search.value = ""; diff.value = ""; renderChips(); update(); search.focus();
     });
   }
 
@@ -220,7 +240,7 @@
     host.innerHTML = '<section class="panel"><h2>Your previous attempts on this device</h2><div class="table-wrap"><table class="history-table"><thead><tr><th>Date</th><th>Score</th><th>Percentage</th><th><span class="visually-hidden">View</span></th></tr></thead><tbody>' +
       rows.map(function (r) {
         return "<tr><td>" + esc(U.fmtDate(r.submittedAt, true)) + "</td><td>" + r.marks + " / " + r.total + "</td><td>" + T.fmtPct(r.percent) + '%</td><td><a href="test-result.html?rid=' + encodeURIComponent(r.rid) + '">View result</a></td></tr>';
-      }).join("") + '</tbody></table></div><p class="muted" style="margin:12px 0 0;font-size:.85rem">Saved only in this browser. Clearing browser data removes them.</p></section>';
+      }).join("") + '</tbody></table></div><p class="muted" style="margin:12px 0 0;font-size:.85rem">Clearing this browser removes your personal review history.</p></section>';
   }
 
   function renderStartBox(test, side) {
@@ -236,7 +256,7 @@
         '<div class="field" id="phone-field"><label for="cand-phone">Contact number <span class="opt">(optional)</span></label><input id="cand-phone" name="phone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" value="' + esc(cand.phone || "") + '" aria-describedby="phone-err">' +
         '<span class="error" id="phone-err">Enter a valid number using digits, spaces, + or -.</span></div>' +
         '<button type="submit" class="btn btn-primary btn-block">' + icon("play", 18) + " Start Test</button>" +
-        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">Your name and city are needed to start. Details stay in this browser and are only used to show on your result.</p></form>';
+        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">When you submit, Sujag Education receives your name, city, score and any phone number you enter. The results PDF shows your name, city and score.</p></form>';
     }
 
     function paint() {

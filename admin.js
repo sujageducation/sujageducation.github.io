@@ -277,7 +277,7 @@
   A.readFileText = readFileText;
 
   /* ---------- routing ---------- */
-  var NAV = [["#dashboard", "Dashboard"], ["sep", "Mock tests"], ["#results", "Mock Test Results"], ["#tests", "All tests"], ["#generate", "Auto-generate from PDF or TXT"], ["#testcats", "Test categories"], ["sep", "Study material"], ["#notes", "Notes"], ["#notecats", "Note categories"], ["#books", "Books"], ["sep", "Website"], ["#updates", "Latest updates"], ["#pages", "Page text and FAQ"], ["#settings", "Settings and GitHub"], ["sep", "People"], ["#members", "Members"]];
+  var NAV = [["#dashboard", "Dashboard"], ["sep", "Mock tests"], ["#tests", "All tests"], ["#results", "Test results"], ["#generate", "Auto-generate from PDF or TXT"], ["#testcats", "Test categories"], ["sep", "Study material"], ["#notes", "Notes"], ["#notecats", "Note categories"], ["#books", "Books"], ["sep", "Website"], ["#updates", "Latest updates"], ["#pages", "Page text and FAQ"], ["#settings", "Settings and GitHub"], ["sep", "People"], ["#members", "Members"]];
   function buildNav() {
     var n = document.getElementById("nav"); n.innerHTML = "";
     NAV.forEach(function (x) { n.appendChild(x[0] === "sep" ? h("div", { c: "sep" }, x[1]) : h("a", { href: x[0] }, x[1])); });
@@ -294,17 +294,6 @@
   A.redraw = route;
 
   /* ---------- dashboard ---------- */
-  ROUTES.results = function () {
-    var all=[]; try { all=JSON.parse(localStorage.getItem("sujag:results")||"[]"); } catch(e) { all=[]; }
-    if(!Array.isArray(all)) all=[];
-    var search=h("input",{type:"search",placeholder:"Search name, test, city or phone",c:"input",style:"max-width:420px"});
-    var box=h("div",{c:"panel"});
-    function csv(){ var keys=["submittedAt","name","city","phone","title","total","correct","wrong","unanswered","marks","percent","timeTaken","rid"]; var rows=[keys.join(",")].concat(all.map(function(r){var c=r.candidate||{};return keys.map(function(k){var v=k==="name"?c.name:k==="city"?c.city:k==="phone"?c.phone:r[k];return '"'+String(v==null?"":v).replace(/"/g,'""')+'"';}).join(",");}));var b=new Blob([rows.join("\n")],{type:"text/csv"}),u=URL.createObjectURL(b),a=h("a",{href:u,download:"sujag-test-results.csv"});a.click();setTimeout(function(){URL.revokeObjectURL(u)},1000);}
-    function printResult(r){var c=r.candidate||{},html='<!doctype html><html><head><meta charset="utf-8"><title>SUJAG Education Result</title><style>body{font-family:Arial,sans-serif;margin:28px;color:#17212b}h1{color:#176b58}table{width:100%;border-collapse:collapse}td,th{padding:10px;border:1px solid #ddd;text-align:left}.score{font-size:30px;font-weight:bold}</style></head><body><h1>SUJAG Education</h1><h2>Mock Test Result</h2><p><b>Candidate:</b> '+(c.name||'')+'<br><b>City:</b> '+(c.city||'')+'<br><b>Phone:</b> '+(c.phone||'')+'</p><h2>'+r.title+'</h2><p class="score">'+r.marks+' / '+r.total+' — '+r.percent+'%</p><table><tr><th>Correct</th><th>Wrong</th><th>Unanswered</th><th>Time</th></tr><tr><td>'+r.correct+'</td><td>'+r.wrong+'</td><td>'+r.unanswered+'</td><td>'+r.timeTaken+' sec</td></tr></table><p>Submitted: '+new Date(r.submittedAt).toLocaleString()+'</p><p>Use Print → Save as PDF.</p></body></html>';var w=window.open("","_blank");if(w){w.document.write(html);w.document.close();w.focus();w.print();}}
-    function draw(){var q=search.value.toLowerCase();var filtered=all.filter(function(r){var c=r.candidate||{};return [c.name,c.city,c.phone,r.title,r.category].join(" ").toLowerCase().includes(q);});box.innerHTML="";box.appendChild(h("div",{c:"row sp"},h("strong",{},filtered.length+" result record(s) on this browser"),h("div",{c:"row"},btn("Export CSV",csv),btn("Refresh",function(){ROUTES.results();}))));if(!filtered.length){box.appendChild(h("p",{c:"mut"},"No results found. Results saved by candidates in this browser/device will appear here."));return;}var table=h("div",{c:"table-wrap"}),t=h("table",{}),thead=h("thead",{},h("tr",{},["Candidate","Test","Score","City","Date",""].map(function(x){return h("th",{},x)}))),tbody=h("tbody",{});filtered.forEach(function(r){var c=r.candidate||{},tr=h("tr",{});[c.name||"—",r.title,r.marks+" / "+r.total+" ("+r.percent+"%)",c.city||"—",new Date(r.submittedAt).toLocaleString()].forEach(function(v){tr.appendChild(h("td",{},v));});var td=h("td",{},btn("PDF",function(){printResult(r);}),btn("Delete",function(){if(confirm("Delete this result from this browser?")){all=all.filter(function(x){return x.rid!==r.rid});localStorage.setItem("sujag:results",JSON.stringify(all));ROUTES.results();}},"danger"));tr.appendChild(td);tbody.appendChild(tr);});t.appendChild(thead);t.appendChild(tbody);table.appendChild(t);box.appendChild(table);}
-    setView([head("Mock Test Results","Candidate attempts saved on this browser/device."),h("div",{c:"note warn"},"This dashboard reads browser-local results. Static GitHub Pages cannot receive submissions from other candidates' devices without a shared online storage service."),search,box]);search.addEventListener("input",draw);draw();
-  };
-
   ROUTES.dashboard = function () {
     var qn = D.tests.reduce(function (s, t) { return s + (t.questions || []).length; }, 0), mem = (A.members ? A.members.count() : 0);
     var probs = validate();
@@ -314,7 +303,7 @@
       !G.token ? h("div", { c: "note warn" }, "GitHub is not connected, so changes can only be downloaded. ", h("a", { href: "#settings" }, "Connect GitHub"), " to publish with one click.") : null,
       h("div", { c: "grid" }, stat(D.tests.length, "Mock tests", "#tests"), stat(qn, "Questions", "#tests"), stat(D.notes.length, "Notes", "#notes"), stat(D.books.length, "Books", "#books"), stat(mem, "Members (this browser)", "#members")),
       h("h2", {}, "Quick actions"),
-      h("div", { c: "row" }, btn("New test", function () { A.go("#test/new"); }, "primary"), btn("Make a test from PDF or TXT", function () { A.go("#generate"); }), btn("New note", function () { A.go("#note/new"); }), btn("New book", function () { A.go("#book/new"); }), btn("Add a member", function () { A.go("#members"); })),
+      h("div", { c: "row" }, btn("New test", function () { A.go("#test/new"); }, "primary"), btn("Test results", function () { A.go("#results"); }), btn("Make a test from PDF or TXT", function () { A.go("#generate"); }), btn("New note", function () { A.go("#note/new"); }), btn("New book", function () { A.go("#book/new"); }), btn("Add a member", function () { A.go("#members"); })),
       h("h2", {}, "Health check"),
       probs.length ? h("div", { c: "note warn" }, h("b", {}, probs.length + " thing(s) to fix before publishing:"), h("ul", {}, probs.slice(0, 12).map(function (x) { return h("li", {}, x); }))) : h("div", { c: "note" }, "No problems found in tests, notes, books or categories."),
       h("h2", {}, "How saving works"),
@@ -341,6 +330,11 @@
   A.qCard = qCard;
 
   /* ---------- tests ---------- */
+  function testKindField(t) {
+    var input = h("select", { onchange: function () { t.kind = input.value; touch(); } },
+      [["mock", "Mock test"], ["past-paper", "Past paper"], ["custom", "Custom test"]].map(function (k) { return h("option", { value: k[0] }, k[1]); }));
+    input.value = t.kind || "mock"; return fld("Test type", input);
+  }
   function catName(list, id) { var c = list.filter(function (x) { return x.id === id; })[0]; return c ? c.name : id; }
   ROUTES.tests = function () {
     var q = h("input", { type: "search", placeholder: "Search tests", "aria-label": "Search tests" }), cat = h("select", { "aria-label": "Category" }, h("option", { value: "" }, "All categories"), D.testCategories.map(function (c) { return h("option", { value: c.id }, c.name); }));
@@ -370,7 +364,7 @@
     var form = h("div", { c: "card" },
       inp(t, "title", { label: "Test title", on: function (v) { if (isNew && !t._idTouched) { t.id = slug(v); idIn.value = t.id; } } }),
       h("div", { c: "cols" }, (function () { var f = inp(t, "id", { label: "Test id (used in the web address)", hint: "Lowercase letters, numbers and hyphens. Changing it breaks old links." }); idIn = f.querySelector("input"); idIn.addEventListener("input", function () { t._idTouched = true; }); return f; })(),
-        sel(t, "category", D.testCategories.map(function (c) { return [c.id, c.name]; }), "Category"), sel(t, "difficulty", ["Easy", "Medium", "Hard"], "Difficulty"), inp(t, "duration", { label: "Time limit (minutes)", type: "number" })),
+        sel(t, "category", D.testCategories.map(function (c) { return [c.id, c.name]; }), "Category"), testKindField(t), sel(t, "difficulty", ["Easy", "Medium", "Hard"], "Difficulty"), inp(t, "duration", { label: "Time limit (minutes)", type: "number" })),
       inp(t, "description", { label: "Short description", area: true, rows: 2 }), chk(t, "featured", "Show on the home page as a featured test"),
       lines(t, "instructions", { label: "Custom instructions (optional)", hint: "One per line. Leave empty to use the default instructions from Settings.", rows: 4 }));
     var idIn;
@@ -417,7 +411,7 @@
       var tcard = h("div", { c: "card" }, h("h3", {}, "Where should these go?"), fld("Destination", tSel));
       if (target === "new") {
         nt.title = nt.title || (G0.file ? G0.file.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ") : "");
-        tcard.appendChild(inp(nt, "title", { label: "New test title" })); tcard.appendChild(h("div", { c: "cols" }, sel(nt, "category", D.testCategories.map(function (c) { return [c.id, c.name]; }), "Category"), sel(nt, "difficulty", ["Easy", "Medium", "Hard"], "Difficulty"), inp(nt, "duration", { label: "Minutes", type: "number" })));
+        tcard.appendChild(inp(nt, "title", { label: "New test title" })); tcard.appendChild(h("div", { c: "cols" }, sel(nt, "category", D.testCategories.map(function (c) { return [c.id, c.name]; }), "Category"), testKindField(nt), sel(nt, "difficulty", ["Easy", "Medium", "Hard"], "Difficulty"), inp(nt, "duration", { label: "Minutes", type: "number" })));
       }
       tcard.appendChild(btn("Add " + G0.qs.length + " question(s)", add, "primary")); res.appendChild(tcard);
     }
@@ -427,7 +421,7 @@
       var clean = G0.qs.map(function (q) { return { q: q.q.trim(), o: q.o.map(function (x) { return x.trim(); }), a: q.a, e: (q.e || "").trim() }; });
       if (target === "new") {
         if (!nt.title.trim()) { toast("Give the new test a title.", true); return; }
-        var t = { id: uniqueId(D.tests, slug(nt.title)), title: nt.title.trim(), category: nt.category, difficulty: nt.difficulty, duration: nt.duration || Math.max(1, Math.ceil(clean.length * 0.75)), featured: false, description: "Practice test with " + clean.length + " questions.", questions: clean };
+        var t = { id: uniqueId(D.tests, slug(nt.title)), title: nt.title.trim(), category: nt.category, kind: nt.kind || "mock", difficulty: nt.difficulty, duration: nt.duration || Math.max(1, Math.ceil(clean.length * 0.75)), featured: false, description: "Practice test with " + clean.length + " questions.", questions: clean };
         D.tests.push(t); touch(); toast("Test created with " + clean.length + " questions."); A.go("#test/" + encodeURIComponent(t.id));
       } else {
         var t2 = D.tests.filter(function (x) { return x.id === target; })[0], have = {}, added = 0; t2.questions.forEach(function (q) { have[q.q.toLowerCase()] = 1; });

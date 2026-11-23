@@ -47,8 +47,8 @@ SUJAG.data = SUJAG.data || {};
     "You can move between questions at any time using Previous, Next or the question numbers.",
     "Your selected answers are kept while you move around, and you can change them before you submit.",
     "The timer starts when you press Start Test. The test is submitted automatically when time runs out.",
-    "Do not close or refresh the page while taking the test. If that happens, your progress on this device is restored.",
-    "After submitting, you will see your score and can review every answer with its explanation."
+    "A refresh restores your progress on this device. The timer continues to run.",
+    "On the final question, choose Submit test. You can review unanswered questions before confirming. Your result is sent to Sujag Education and you can download your PDF."
   ];
 
   /* ---------- Tests ---------- */

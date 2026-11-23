@@ -42,7 +42,7 @@
     var c = get.cat(t.category);
     var url = "test-details.html?id=" + encodeURIComponent(t.id);
     return '<article class="card item-card card-hover">' +
-      '<div class="top"><a class="badge" href="test-category.html?cat=' + encodeURIComponent(t.category) + '">' + esc(c ? c.name : t.category) + "</a>" + diffBadge(t.difficulty) + "</div>" +
+      '<div class="top"><a class="badge" href="test-category.html?cat=' + encodeURIComponent(t.category) + '">' + esc(c ? c.name : t.category) + "</a>" + diffBadge(t.difficulty) + (t.kind === "past-paper" || t.kind === "custom" ? '<span class="badge badge-neutral">' + (t.kind === "past-paper" ? "Past paper" : "Custom test") + "</span>" : "") + "</div>" +
       '<h3><a href="' + url + '">' + esc(t.title) + "</a></h3>" +
       '<p class="desc">' + esc(t.description) + "</p>" +
       '<ul class="facts"><li>' + icon("list", 16) + plural(t.questions.length, "question") + "</li><li>" + icon("clock", 16) + t.duration + " min</li></ul>" +
