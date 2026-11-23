@@ -19,7 +19,8 @@
   function communityBox(test) {
     var c = (S.site && S.site.community) || {};
     if (c.enabled === false) return "";
-    var txt = (test && test.groupText ? String(test.groupText).trim() : "") || c.text, g = safeUrl(test && test.groupUrl), ch = safeUrl(c.channelUrl);
+    var txt = (test && test.groupText ? String(test.groupText).trim() : "") || c.text, phone = String((test && test.groupPhone) || c.groupPhone || "").replace(/\D/g, "").replace(/^00/, ""),
+      g = (phone.length >= 7 && phone.length <= 15) ? "https://wa.me/" + phone + "?text=" + encodeURIComponent("I want to join paid WhatsApp group" + (test && test.title ? " - " + test.title : "")) : safeUrl(test && test.groupUrl), ch = safeUrl(c.channelUrl);
     if (!txt && !c.title && !g && !ch) return "";
     function btn(url, label, cls) { return '<a class="btn ' + cls + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>"; }
     return '<section class="panel community-box" aria-labelledby="community-h" style="margin-bottom:22px;border-left:4px solid var(--accent)">' +
@@ -65,6 +66,9 @@
     var cls = r.percent < 40 ? " is-fail" : r.percent < 60 ? " is-low" : "";
     var who = [r.candidate && r.candidate.name, r.candidate && r.candidate.city].filter(Boolean).join(", ");
     $("#result-head").hidden = false;
+    var oldBox = document.getElementById("community-top"); if (oldBox) oldBox.remove();
+    var topBox = communityBox(test);
+    if (topBox) $("#result-head").insertAdjacentHTML("beforebegin", '<div class="container" id="community-top" style="padding-top:18px">' + topBox + "</div>");
     $("#result-head").innerHTML = '<div class="container"><ol class="breadcrumb"><li><a href="index.html">Home</a></li><li><a href="mock-tests.html">Mock Tests</a></li><li aria-current="page">Result</li></ol>' +
       '<div class="result-hero"><div class="ring' + cls + '" id="ring" role="img" aria-label="Score ' + T.fmtPct(r.percent) + ' percent"><svg viewBox="0 0 160 160" aria-hidden="true"><circle class="track" cx="80" cy="80" r="70"/><circle class="value" cx="80" cy="80" r="70"/></svg>' +
       '<div class="ring-label"><strong>' + T.fmtPct(r.percent) + "%</strong><span>Score</span></div></div>" +
@@ -77,7 +81,7 @@
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
     var timeLeft = r.duration * 60 - r.timeTaken;
-    $("#result-main").innerHTML = '<div class="container">' + communityBox(test) +
+    $("#result-main").innerHTML = '<div class="container">' +
       '<section aria-labelledby="sum-h"><h2 class="visually-hidden" id="sum-h">Score summary</h2><div class="stat-grid">' +
       '<div class="stat"><span>Total questions</span><strong>' + r.total + "</strong></div>" +
       '<div class="stat is-ok"><span>Correct</span><strong>' + r.correct + "</strong></div>" +
