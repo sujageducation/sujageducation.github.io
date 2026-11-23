@@ -16,10 +16,10 @@
   }
 
   function safeUrl(u) { u = String(u || "").trim(); return /^https?:\/\//i.test(u) ? u : ""; }
-  function communityBox() {
+  function communityBox(test) {
     var c = (S.site && S.site.community) || {};
     if (c.enabled === false) return "";
-    var g = safeUrl(c.groupUrl), ch = safeUrl(c.channelUrl);
+    var g = safeUrl(test && test.groupUrl), ch = safeUrl(c.channelUrl);
     if (!c.text && !c.title && !g && !ch) return "";
     function btn(url, label, cls) { return '<a class="btn ' + cls + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>"; }
     return '<section class="panel community-box" aria-labelledby="community-h" style="margin-bottom:22px;border-left:4px solid var(--accent)">' +
@@ -77,7 +77,7 @@
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
     var timeLeft = r.duration * 60 - r.timeTaken;
-    $("#result-main").innerHTML = '<div class="container">' + communityBox() +
+    $("#result-main").innerHTML = '<div class="container">' + communityBox(test) +
       '<section aria-labelledby="sum-h"><h2 class="visually-hidden" id="sum-h">Score summary</h2><div class="stat-grid">' +
       '<div class="stat"><span>Total questions</span><strong>' + r.total + "</strong></div>" +
       '<div class="stat is-ok"><span>Correct</span><strong>' + r.correct + "</strong></div>" +
