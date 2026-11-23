@@ -52,12 +52,18 @@
       const response = await fetch(base + path, Object.assign({
         mode: "cors", credentials: "omit", cache: "no-store", referrerPolicy: "no-referrer", signal: controller.signal
       }, options));
-      const data = await response.json();
+      let data;
+      try { data = await response.json(); }
+      catch (_) { throw new Error("The results service returned an unreadable response. Please try again."); }
       if (!response.ok || data.ok === false) {
         const err = new Error(data.error || "The results service is unavailable.");
         err.status = response.status; throw err;
       }
       return data;
+    } catch (error) {
+      if (error.name === "AbortError") throw new Error("The results service took too long to respond. Please try again.");
+      if (error instanceof TypeError) throw new Error("Cannot reach the results service. Check your connection and try again.");
+      throw error;
     } finally { clearTimeout(timeout); }
   }
   function notify(rid, state) {

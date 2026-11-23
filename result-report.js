@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   let pdfScript, arabicFont;
-  const officialSite = "https://salucommunity.github.io/sujageducation.github.io/";
+  const officialSite = "https://sujageducation.github.io/";
   function siteURL(settings) {
     for (const address of [settings.url, new URL(".", location.href).href, officialSite]) {
       try {
@@ -15,7 +15,7 @@
   function loadPDF() {
     if (!pdfScript) pdfScript = new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "report-assets/pdf-lib.min.js";
+      script.src = "pdf-lib.min.js";
       script.onload = () => resolve(window.PDFLib);
       script.onerror = () => { pdfScript = null; script.remove(); reject(new Error("The PDF tools could not load. Please try again.")); };
       document.head.appendChild(script);
@@ -23,7 +23,7 @@
     return pdfScript;
   }
   function loadArabic() {
-    if (!arabicFont) arabicFont = new FontFace("Sujag Report Arabic", "url(report-assets/arabic.woff)").load()
+    if (!arabicFont) arabicFont = new FontFace("Sujag Report Arabic", "url(arabic.woff)").load()
       .then(font => document.fonts.add(font)).catch(() => {});
     return arabicFont;
   }

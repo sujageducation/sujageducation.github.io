@@ -163,7 +163,7 @@
     }
 
     /* ----- Submit ----- */
-    async function submit(auto) {
+    function submit(auto) {
       if (submitting) return;
       submitting = true; clearInterval(tick);
       S.ui.closeAll(); closeSheet(false);
@@ -174,9 +174,10 @@
       els.next.textContent = "Submitting…";
       document.querySelectorAll(".exam-main button, #q-body input").forEach(function (el) { el.disabled = true; });
       var result = T.finish(test, st, auto);
-      var sent = window.SujagResults.state(result) === "sent" || await window.SujagResults.sendResult(result);
-      if (sent || result.queueSaved) T.clearFinishedProgress(test.id, st.rid);
+      // The saved score is ready now. A slow or interrupted connection must
+      // never leave the candidate waiting on the final question.
       if (navigator.onLine !== false && T.getResult(result.rid)) {
+        if (window.SujagResults.state(result) !== "sent") window.SujagResults.sendResult(result);
         window.location.replace("test-result.html?rid=" + encodeURIComponent(result.rid)); return;
       }
       // An offline browser cannot navigate to a page it has never opened.
@@ -184,12 +185,17 @@
       card.innerHTML = '<h1>Your result</h1><p></p><p role="status"></p><button type="button" class="btn btn-primary">Download PDF</button>';
       card.querySelector("p").textContent = result.title + " · " + result.marks + " / " + result.total;
       var status = card.querySelector("[role=status]");
-      status.textContent = sent ? "Your result is saved in the admin panel." : "Waiting to send your result. Keep this page open or reopen the site when connected.";
+      function delivery(state) {
+        status.textContent = state === "sent" ? "Your result is saved in the admin panel." :
+          state === "rejected" ? "The result could not be accepted. Download your PDF and contact Sujag Education." :
+          "Your score is ready. Keep this page open until your result is sent.";
+        if (state === "sent") T.clearFinishedProgress(test.id, st.rid);
+      }
+      delivery(window.SujagResults.state(result));
       window.addEventListener("sujag-result-delivery", function (event) {
-        if (event.detail.rid === result.rid && event.detail.state === "sent") {
-          status.textContent = "Your result is saved in the admin panel."; T.clearFinishedProgress(test.id, st.rid);
-        }
+        if (event.detail.rid === result.rid) delivery(event.detail.state);
       });
+      window.SujagResults.sendResult(result);
       card.querySelector("button").onclick = function () {
         window.SujagReport.download(S.site, result.title, [Object.assign({}, result.candidate, { marks: result.marks, total: result.total })])
           .catch(function () { S.ui.toast("The PDF could not be downloaded. Please try again.", "error"); });
