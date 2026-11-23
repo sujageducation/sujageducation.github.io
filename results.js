@@ -19,12 +19,12 @@
   function communityBox(test) {
     var c = (S.site && S.site.community) || {};
     if (c.enabled === false) return "";
-    var g = safeUrl(test && test.groupUrl), ch = safeUrl(c.channelUrl);
-    if (!c.text && !c.title && !g && !ch) return "";
+    var txt = (test && test.groupText ? String(test.groupText).trim() : "") || c.text, g = safeUrl(test && test.groupUrl), ch = safeUrl(c.channelUrl);
+    if (!txt && !c.title && !g && !ch) return "";
     function btn(url, label, cls) { return '<a class="btn ' + cls + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>"; }
     return '<section class="panel community-box" aria-labelledby="community-h" style="margin-bottom:22px;border-left:4px solid var(--accent)">' +
       (c.title ? '<h2 id="community-h" style="margin-top:0">' + esc(c.title) + "</h2>" : "") +
-      (c.text ? '<p style="white-space:pre-line">' + esc(c.text) + "</p>" : "") +
+      (txt ? '<p style="white-space:pre-line">' + esc(txt) + "</p>" : "") +
       ((g || ch) ? '<div class="row" style="gap:10px;flex-wrap:wrap">' +
         (g ? btn(g, c.groupLabel || "Join our Premium WhatsApp group", "btn-primary") : "") +
         (ch ? btn(ch, c.channelLabel || "Join our free WhatsApp channel", "btn-ghost") : "") + "</div>" : "") +
