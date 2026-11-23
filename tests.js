@@ -240,12 +240,15 @@
       "<li><span>" + icon("target", 18) + "Marking</span><span>1 mark each, no negative marking</span></li>" +
       "<li><span>" + icon("bar-chart", 18) + "Difficulty</span><span>" + esc(test.difficulty || "Not set") + "</span></li></ul></section>" +
       '<section class="panel"><h2>Instructions</h2><ol class="instructions">' + T.instructions(test).map(function (t) { return "<li><span>" + esc(t) + "</span></li>"; }).join("") + "</ol></section>" +
-      '<div id="attempts"></div>';
+      '<div id="start-slot"></div><div id="attempts"></div>';
 
     var related = S.catalogue.relatedTests(test, 3);
     if (related.length) main.insertAdjacentHTML("beforeend", '<section class="section-sm" id="related-tests"><h2>Related tests</h2><div class="grid">' + related.map(cards.test).join("") + '</div></section>');
     renderAttempts(test);
-    renderStartBox(test, side);
+    var layout = $("#detail-layout");
+    if (layout) layout.style.gridTemplateColumns = "minmax(0,1fr)";
+    if (side && side.parentNode) side.parentNode.removeChild(side);
+    renderStartBox(test, $("#start-slot"));
   }
 
   function renderAttempts(test) {

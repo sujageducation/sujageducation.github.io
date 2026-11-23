@@ -15,6 +15,22 @@
     return "This topic needs more practice. Go through each explanation below, study the related notes and retake the test when you are ready.";
   }
 
+  function safeUrl(u) { u = String(u || "").trim(); return /^https?:\/\//i.test(u) ? u : ""; }
+  function communityBox() {
+    var c = (S.site && S.site.community) || {};
+    if (c.enabled === false) return "";
+    var g = safeUrl(c.groupUrl), ch = safeUrl(c.channelUrl);
+    if (!c.text && !c.title && !g && !ch) return "";
+    function btn(url, label, cls) { return '<a class="btn ' + cls + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>"; }
+    return '<section class="panel community-box" aria-labelledby="community-h" style="margin-bottom:22px;border-left:4px solid var(--accent)">' +
+      (c.title ? '<h2 id="community-h" style="margin-top:0">' + esc(c.title) + "</h2>" : "") +
+      (c.text ? '<p style="white-space:pre-line">' + esc(c.text) + "</p>" : "") +
+      ((g || ch) ? '<div class="row" style="gap:10px;flex-wrap:wrap">' +
+        (g ? btn(g, c.groupLabel || "Join our Premium WhatsApp group", "btn-primary") : "") +
+        (ch ? btn(ch, c.channelLabel || "Join our free WhatsApp channel", "btn-ghost") : "") + "</div>" : "") +
+      "</section>";
+  }
+
   function emptyState(title, text) {
     $("#result-head").hidden = true;
     $("#result-main").innerHTML = '<div class="container">' + S.cards.empty(title, text) +
@@ -61,7 +77,7 @@
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
     var timeLeft = r.duration * 60 - r.timeTaken;
-    $("#result-main").innerHTML = '<div class="container">' +
+    $("#result-main").innerHTML = '<div class="container">' + communityBox() +
       '<section aria-labelledby="sum-h"><h2 class="visually-hidden" id="sum-h">Score summary</h2><div class="stat-grid">' +
       '<div class="stat"><span>Total questions</span><strong>' + r.total + "</strong></div>" +
       '<div class="stat is-ok"><span>Correct</span><strong>' + r.correct + "</strong></div>" +
