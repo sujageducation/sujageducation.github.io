@@ -4,6 +4,12 @@ window.SUJAG = window.SUJAG || {};
 SUJAG.data = SUJAG.data || {};
 SUJAG.data.testCategories = [
   {
+    "id": "other-govt",
+    "name": "Other Jobs",
+    "icon": "briefcase",
+    "description": "Clerical and general aptitude practice for other private or govt posts."
+  },
+  {
     "id": "spsc",
     "name": "SPSC",
     "icon": "landmark",
@@ -32,12 +38,6 @@ SUJAG.data.testCategories = [
     "name": "Police Jobs",
     "icon": "shield",
     "description": "Practice for police constable and related recruitment tests."
-  },
-  {
-    "id": "other-govt",
-    "name": "Other Government Jobs",
-    "icon": "briefcase",
-    "description": "Clerical and general aptitude practice for other government posts."
   },
   {
     "id": "university",
@@ -2796,9 +2796,10 @@ SUJAG.data.tests = [
       }
     ],
     "createdAt": "2026-11-23T10:37:30.398Z",
-    "updatedAt": "2026-11-23T12:23:06.357Z",
+    "updatedAt": "2026-11-23T13:23:30.726Z",
     "groupUrl": "https://wa.me/923253061605",
     "instructions": [],
-    "groupText": "جيڪي دوست UEP Field Production Trainee جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 Mock Tests ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي."
+    "groupText": "UEP Field Production Trainee\nجيڪي دوست جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 موڪ ٽيسٽ ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي.",
+    "groupPhone": "923253061605"
   }
 ];
