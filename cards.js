@@ -27,6 +27,46 @@
     return list("tests").filter(function (t) { return ids.indexOf(t.category) !== -1; });
   }
 
+  function testKind(t) {
+    if (t.kind === "past-paper") return "Past paper";
+    if (t.kind === "custom") return "Custom test";
+    return "Mock test";
+  }
+
+  function groupsFor(category) {
+    return list("testGroups").filter(function (g) { return (g.includes || []).includes(category); });
+  }
+
+  function recentFirst(a, b) {
+    return String(b.updatedAt || b.createdAt || "").localeCompare(String(a.updatedAt || a.createdAt || ""));
+  }
+
+  function relatedTests(test, limit) {
+    var groups = groupsFor(test.category);
+    function relevance(item) {
+      if (item.category === test.category) return 2;
+      return groups.some(function (g) { return g.includes.includes(item.category); }) ? 1 : 0;
+    }
+    return list("tests").filter(function (item) { return item.id !== test.id; })
+      .sort(function (a, b) { return relevance(b) - relevance(a) || recentFirst(a, b); }).slice(0, limit);
+  }
+
+  function latestUpdates() {
+    var items = list("updates").filter(function (u) { return u.type !== "test"; });
+    var manual = new Map();
+    list("updates").forEach(function (u) {
+      if (u.type === "test" && (!manual.has(u.id) || u.date > manual.get(u.id))) manual.set(u.id, u.date);
+    });
+    list("tests").forEach(function (t) {
+      var published = t.updatedAt || t.createdAt || "";
+      var date = [published, manual.get(t.id) || ""].sort().pop();
+      var kind = testKind(t), updated = published && published === t.updatedAt && published !== t.createdAt;
+      items.push({ type: "test", id: t.id, date: date,
+        label: date ? (updated ? "Updated " : "New ") + kind.toLowerCase() : kind });
+    });
+    return items.sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
+  }
+
   function price(b) {
     if (!b.price) return "Price on request";
     return (S.site.currency || "Rs.") + " " + Number(b.price).toLocaleString("en-US");
@@ -96,5 +136,6 @@
 
   S.get = get;
   S.testsIn = testsIn;
+  S.catalogue = { testKind: testKind, groupsFor: groupsFor, recentFirst: recentFirst, relatedTests: relatedTests, latestUpdates: latestUpdates };
   S.cards = { test: testCard, note: noteCard, book: bookCard, category: categoryCard, price: price, diffBadge: diffBadge, empty: empty };
 })();

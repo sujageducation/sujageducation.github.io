@@ -28,6 +28,20 @@
   };
   T.fmtPct = function (p) { return (Math.round(p * 10) / 10).toString(); };
 
+  T.reviewItem = function (q, i, a) {
+    var state = a === null || a === undefined ? "skip" : a === q.a ? "ok" : "bad";
+    var label = state === "ok" ? "Correct" : state === "bad" ? "Incorrect" : "Not answered";
+    var badge = state === "ok" ? "badge-easy" : state === "bad" ? "badge-hard" : "badge-neutral";
+    return '<article class="review-item r-' + state + '" data-state="' + state + '"><div class="review-q"><h3><small>Q' + (i + 1) + ".</small>" + esc(q.q) + '</h3><span class="badge ' + badge + '">' + label + "</span></div>" +
+      '<ul class="r-opts">' + q.o.map(function (o, k) {
+        var cls = k === q.a ? " is-correct" : k === a ? " is-wrong" : "";
+        var tag = k === q.a ? '<span class="tag">' + icon("check-circle", 16) + "<span>Correct answer</span></span>" : (k === a ? '<span class="tag">' + icon("x-circle", 16) + "<span>Your answer</span></span>" : "");
+        if (k === q.a && k === a) tag = '<span class="tag">' + icon("check-circle", 16) + "<span>Your answer, correct</span></span>";
+        return '<li class="r-opt' + cls + '"><span class="opt-key">' + String.fromCharCode(65 + k) + "</span><span>" + esc(o) + "</span>" + tag + "</li>";
+      }).join("") + "</ul>" +
+      (q.e ? '<div class="explain"><strong>Explanation: </strong>' + esc(q.e) + "</div>" : "") + "</article>";
+  };
+
   T.getProgress = function (test) {
     var st = U.store.get(T.progressKey(test.id), null);
     if (!st || !Array.isArray(st.answers) || st.answers.length !== test.questions.length || typeof st.endAt !== "number") return null;
@@ -153,7 +167,7 @@
           return '<button type="button" class="chip" data-cat="' + esc(c.id) + '" aria-pressed="' + (state.cat === c.id) + '">' + esc(c.name) + ' <span class="count">' + n + "</span></button>";
         }).join("");
     }
-    function update() { renderList(list, count, filterTests(S.data.tests, state)); }
+    function update() { renderList(list, count, filterTests(S.data.tests, state).sort(S.catalogue.recentFirst)); }
     renderChips(); update();
     search.addEventListener("input", U.debounce(function () { state.q = search.value; update(); }, 120));
     diff.addEventListener("change", function () { state.diff = diff.value; update(); });
@@ -176,7 +190,7 @@
         '<p style="text-align:center;margin-top:18px"><a class="btn btn-primary" href="mock-tests.html">All mock tests</a></p></div>';
       return;
     }
-    var items = S.testsIn(id);
+    var items = S.testsIn(id).sort(S.catalogue.recentFirst);
     S.setMeta({ title: c.name + " Mock Tests", description: c.description + " Free online practice tests with instant results." });
     head.innerHTML = '<div class="container"><ol class="breadcrumb"><li><a href="index.html">Home</a></li><li><a href="mock-tests.html">Mock Tests</a></li><li aria-current="page">' + esc(c.name) + "</li></ol>" +
       '<span class="cat-hero-icon">' + icon(c.icon || "book", 28) + "</span><h1>" + esc(c.name) + "</h1><p class=\"lead\">" + esc(c.description) + "</p></div>";
@@ -197,12 +211,11 @@
   }
 
   /* ---------- test-details.html ---------- */
-  function validPhone(v) {
-    if (!v) return true;
-    if (!/^[0-9+\-\s()]+$/.test(v)) return false;
-    var d = v.replace(/\D/g, "").length;
-    return d >= 7 && d <= 15;
-  }
+  T.normalizePhone = function (value) {
+    var text = String(value || "").trim().replace(/[۰-۹]/g, function (c) { return c.charCodeAt(0) - 0x6f0; })
+      .replace(/[٠-٩]/g, function (c) { return c.charCodeAt(0) - 0x660; }).replace(/[\s()-]/g, "");
+    return /^\+?\d{7,15}$/.test(text) ? text : "";
+  };
 
   function pageDetails() {
     var id = U.qs("id"), test = S.get.test(id), head = $("#detail-head"), main = $("#detail-main"), side = $("#detail-side");
@@ -229,6 +242,8 @@
       '<section class="panel"><h2>Instructions</h2><ol class="instructions">' + T.instructions(test).map(function (t) { return "<li><span>" + esc(t) + "</span></li>"; }).join("") + "</ol></section>" +
       '<div id="attempts"></div>';
 
+    var related = S.catalogue.relatedTests(test, 3);
+    if (related.length) main.insertAdjacentHTML("beforeend", '<section class="section-sm" id="related-tests"><h2>Related tests</h2><div class="grid">' + related.map(cards.test).join("") + '</div></section>');
     renderAttempts(test);
     renderStartBox(test, side);
   }
@@ -246,21 +261,21 @@
   function renderStartBox(test, side) {
     var progress = T.getProgress(test);
     var retake = U.qs("retake"), prev = retake ? T.getResult(retake) : null;
-    var cand = (prev && prev.candidate) || {};
+    var cand = (progress && progress.candidate) || (prev && prev.candidate) || {};
     var showResume = !!progress;
 
     function formHtml() {
       return '<form id="start-form" novalidate><div class="field"><label for="cand-name">Candidate name <span class="req">(required)</span></label>' +
         '<input id="cand-name" name="name" type="text" maxlength="60" autocomplete="name" required value="' + esc(cand.name || "") + '"><span class="error">Please enter your name.</span></div>' +
         '<div class="field"><label for="cand-city">City <span class="req">(required)</span></label><input id="cand-city" name="city" type="text" maxlength="40" autocomplete="address-level2" required value="' + esc(cand.city || "") + '"><span class="error">Please enter your city.</span></div>' +
-        '<div class="field" id="phone-field"><label for="cand-phone">Contact number <span class="opt">(optional)</span></label><input id="cand-phone" name="phone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" value="' + esc(cand.phone || "") + '" aria-describedby="phone-err">' +
-        '<span class="error" id="phone-err">Enter a valid number using digits, spaces, + or -.</span></div>' +
-        '<button type="submit" class="btn btn-primary btn-block">' + icon("play", 18) + " Start Test</button>" +
-        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">When you submit, Sujag Education receives your name, city, score and any phone number you enter. The results PDF shows your name, city and score.</p></form>';
+        '<div class="field" id="phone-field"><label for="cand-phone">Mobile number <span class="req">(required)</span></label><input id="cand-phone" name="phone" type="tel" required maxlength="32" autocomplete="tel" inputmode="tel" value="' + esc(cand.phone || "") + '" aria-describedby="phone-err">' +
+        '<span class="error" id="phone-err">Enter your mobile number, including the area or country code.</span></div>' +
+        '<button type="submit" class="btn btn-primary btn-block">' + icon("play", 18) + (showResume ? " Continue saved attempt" : " Start Test") + "</button>" +
+        '<p class="help muted" style="font-size:.8rem;margin:12px 0 0">Your mobile number is visible to Sujag Education admins. Result PDFs show your name, city and score.</p></form>';
     }
 
     function paint() {
-      if (showResume) {
+      if (showResume && T.normalizePhone(cand.phone)) {
         var left = Math.max(0, Math.round((progress.endAt - Date.now()) / 1000));
         var answered = progress.answers.filter(function (a) { return a !== null; }).length;
         side.innerHTML = '<div class="panel start-box"><h2>Test in progress</h2><p class="sub">' + answered + " of " + test.questions.length + " answered. " +
@@ -269,23 +284,33 @@
           '<button type="button" class="btn btn-ghost btn-block" id="restart" style="margin-top:10px">Discard and start again</button></div>';
         $("#restart").addEventListener("click", function () {
           S.ui.confirm({ title: "Discard this attempt?", message: "Your saved answers for this test will be removed and a new attempt will begin.", confirmText: "Discard", danger: true })
-            .then(function (ok) { if (ok) { T.clearProgress(test.id); showResume = false; paint(); } });
+            .then(function (ok) { if (ok) { T.clearProgress(test.id); showResume = false; cand = (prev && prev.candidate) || {}; paint(); } });
         });
         return;
       }
-      side.innerHTML = '<div class="panel start-box"><h2>Start this test</h2><p class="sub">' + test.questions.length + " questions &middot; " + test.duration + " minutes</p>" + formHtml() + "</div>";
+      var intro = showResume ? "<h2>Complete your details</h2><p class=\"sub\">Add your mobile number to continue your saved attempt. Your answers and original deadline are kept.</p>" :
+        '<h2>Start this test</h2><p class="sub">' + test.questions.length + " questions &middot; " + test.duration + " minutes</p>";
+      side.innerHTML = '<div class="panel start-box">' + intro + formHtml() + "</div>";
       var form = $("#start-form");
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        var phone = form.phone.value.trim(), field = $("#phone-field");
-        var okN = form.name.value.trim().length >= 2, okC = form.city.value.trim().length >= 2, ok = validPhone(phone);
+        var phone = T.normalizePhone(form.phone.value), field = $("#phone-field");
+        var okN = form.name.value.trim().length >= 2, okC = form.city.value.trim().length >= 2, ok = !!phone;
         form.name.closest(".field").classList.toggle("has-error", !okN);
         form.city.closest(".field").classList.toggle("has-error", !okC);
         field.classList.toggle("has-error", !ok);
+        form.phone.setAttribute("aria-invalid", String(!ok));
         if (!okN) { form.name.focus(); return; }
         if (!okC) { form.city.focus(); return; }
         if (!ok) { form.phone.focus(); return; }
-        var st = T.startAttempt(test, { name: form.name.value.trim(), city: form.city.value.trim(), phone: phone });
+        var candidate = { name: form.name.value.trim(), city: form.city.value.trim(), phone: phone };
+        var st;
+        if (showResume) {
+          var current = T.getProgress(test);
+          if (!current || current.rid !== progress.rid) { window.location.reload(); return; }
+          current.candidate = candidate;
+          st = U.store.set(T.progressKey(test.id), current);
+        } else st = T.startAttempt(test, candidate);
         if (!st) {
           S.ui.alert({ title: "Browser storage is blocked", message: "This test saves your progress in your browser, but storage seems to be blocked or full. Allow site data for this page (or leave private browsing) and try again." });
           return;

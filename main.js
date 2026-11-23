@@ -313,6 +313,28 @@
   }
 
   /* ---------- Search overlay ---------- */
+  S.searchKeywords = function () {
+    var terms = Array.isArray(site.searchKeywords) ? site.searchKeywords : ["SPSC", "English grammar", "Pakistan Studies", "Mathematics", "Computer", "Books"];
+    var seen = new Set();
+    return terms.filter(function (term) {
+      if (typeof term !== "string" || !term.trim()) return false;
+      var key = term.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    }).map(function (term) { return term.trim(); });
+  };
+  S.keywordLinks = function () {
+    return S.searchKeywords().map(function (term) {
+      return '<a class="chip" href="search.html?q=' + encodeURIComponent(term) + '">' + esc(term) + '</a>';
+    }).join("");
+  };
+  ready(function () {
+    var host = document.getElementById("popular-keywords");
+    if (!host) return;
+    var links = S.keywordLinks();
+    host.querySelector(".chip-row").innerHTML = links;
+    host.hidden = !links;
+  });
   function openSearch() {
     if (document.getElementById("search-overlay")) return;
     var prev = document.activeElement;
@@ -322,13 +344,12 @@
     o.setAttribute("role", "dialog");
     o.setAttribute("aria-modal", "true");
     o.setAttribute("aria-label", "Search " + site.name);
-    var popular = ["SPSC", "English grammar", "Pakistan Studies", "Mathematics", "Computer", "Books"];
+    var links = S.keywordLinks();
     o.innerHTML =
       '<div class="search-panel"><form role="search" action="search.html" method="get">' +
       '<div class="search-field">' + icon("search", 20) + '<input type="search" name="q" placeholder="Search tests, notes, books and categories" aria-label="Search" autocomplete="off" maxlength="80"></div></form>' +
-      '<p class="hint">Popular searches</p><div class="chip-row">' +
-      popular.map(function (p) { return '<a class="chip" href="search.html?q=' + encodeURIComponent(p) + '">' + esc(p) + "</a>"; }).join("") +
-      '</div><div class="modal-actions"><button type="button" class="btn btn-ghost btn-sm" data-close>Close</button></div></div>';
+      (links ? '<p class="hint">Popular searches</p><div class="chip-row">' + links + '</div>' : '') +
+      '<div class="modal-actions"><button type="button" class="btn btn-ghost btn-sm" data-close>Close</button></div></div>';
     document.body.appendChild(o);
     document.documentElement.style.overflow = "hidden";
     o.querySelector("input").focus();

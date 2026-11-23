@@ -43,7 +43,7 @@
       image.onerror = () => reject(new Error("Could not load the report logo.")); image.src = src;
     });
   }
-  async function build(settings, title, rows) {
+  async function createLayout(settings, title, sample = "") {
     const L = await loadPDF(), doc = await L.PDFDocument.create();
     const regular = await doc.embedFont(L.StandardFonts.Helvetica), bold = await doc.embedFont(L.StandardFonts.HelveticaBold);
     const brand = settings.name || "SUJAG Education", url = siteURL(settings);
@@ -51,10 +51,9 @@
     doc.setTitle(title + " | " + brand); doc.setAuthor(brand);
     const ink = L.rgb(.08,.16,.14), green = L.rgb(.055,.29,.22), line = L.rgb(.81,.86,.84), pale = L.rgb(.95,.97,.96), white = L.rgb(1,1,1);
     const W = 595.28, H = 841.89, margin = 40, right = W - margin;
-    const cols = [margin + 10, margin + 231, margin + 421], widths = [202, 171, 78];
     const measure = document.createElement("canvas").getContext("2d");
     const native = text => /^[\x20-\x7E\u00A0-\u00FF\u2013\u2014\u2018\u2019\u201C\u201D]+$/.test(text);
-    if (/[\u0600-\u08ff]/.test([brand, title].concat(rows.map(r => r.name + r.city)).join(" "))) await loadArabic();
+    if (/[\u0600-\u08ff]/.test([brand, title, sample].join(" "))) await loadArabic();
     const face = (size, heavy) => (heavy ? "bold " : "") + size + 'px Arial, "Sujag Report Arabic", sans-serif';
     function width(text, size, heavy) {
       if (native(text)) return (heavy ? bold : regular).widthOfTextAtSize(text, size);
@@ -74,7 +73,7 @@
       }
       lines.push(current || "—"); return lines;
     }
-    let page, y, band;
+    let page;
     async function draw(text, x, baseline, size, heavy = false, color = ink) {
       if (native(text)) { page.drawText(text, { x, y: baseline, font: heavy ? bold : regular, size, color }); return; }
       // Browser shaping preserves joined Urdu and Sindhi letters and mixed-direction names.
@@ -92,7 +91,7 @@
       page.drawRectangle({x:0,y:H-7,width:W,height:7,color:green});
       const dim = logo.scaleToFit(60,68);
       page.drawImage(logo,{x:right-dim.width,y:H-38-dim.height,width:dim.width,height:dim.height});
-      y = H - 55;
+      let y = H - 55;
       for (const text of wrap(brand,17,385,true)) { await draw(text,margin,y,17,true,green); y -= 21; }
       for (const text of wrap(url,10,385,false)) { await draw(text,margin,y,10,false,green); y -= 14; }
       const link = doc.context.register(doc.context.obj({ Type:"Annot", Subtype:"Link",
@@ -101,7 +100,26 @@
       page.node.addAnnot(link);
       y = Math.min(y - 19, H - 123);
       for (const text of wrap(title,19,right-margin,true)) { await draw(text,margin,y,19,true); y -= 25; }
-      y -= 3; page.drawRectangle({x:margin,y:y-22,width:right-margin,height:24,color:green});
+      return y - 3;
+    }
+    function finish() {
+      const pages = doc.getPages();
+      pages.forEach((p,i) => {
+        const label = (i+1) + " / " + pages.length;
+        p.drawText(label,{x:right-regular.widthOfTextAtSize(label,9),y:28,size:9,font:regular,color:green});
+      });
+      return doc.save();
+    }
+    return {openPage, draw, wrap, finish, margin, right, ink, green, line, pale, white, get page() { return page; }};
+  }
+  async function build(settings, title, rows) {
+    const layout = await createLayout(settings, title, rows.map(r => r.name + " " + r.city).join(" "));
+    const {margin, right, draw, wrap, green, ink, line, pale, white} = layout;
+    const cols = [margin + 10, margin + 231, margin + 421], widths = [202, 171, 78];
+    let page, y, band;
+    async function openPage() {
+      y = await layout.openPage(); page = layout.page;
+      page.drawRectangle({x:margin,y:y-22,width:right-margin,height:24,color:green});
       for (const [i,heading] of ["Name","City","Score"].entries()) await draw(heading,cols[i],y-14,11,true,white);
       y -= 22; band = false;
     }
@@ -117,20 +135,17 @@
       y -= height; band = !band;
       page.drawLine({start:{x:margin,y},end:{x:right,y},thickness:.55,color:line});
     }
-    const pages = doc.getPages();
-    pages.forEach((p,i) => {
-      const label = (i+1) + " / " + pages.length;
-      p.drawText(label,{x:right-regular.widthOfTextAtSize(label,9),y:28,size:9,font:regular,color:green});
-    });
-    return doc.save();
+    return layout.finish();
   }
-  async function download(settings, title, rows) {
-    const bytes = await build(settings, title, rows);
+  function savePDF(bytes, title, suffix) {
     const url = URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));
     const a = document.createElement("a");
     a.href = url;
-    a.download = (title.replace(/[\\/:*?"<>|\u0000-\u001f]+/g," ").trim().slice(0,112) || "Test") + " - Results.pdf";
+    a.download = (title.replace(/[\\/:*?"<>|\u0000-\u001f]+/g," ").trim().slice(0,112) || "Test") + " - " + suffix + ".pdf";
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
-  window.SujagReport = { download };
+  async function download(settings, title, rows) {
+    savePDF(await build(settings, title, rows), title, "Results");
+  }
+  window.SujagReport = { download, createLayout, savePDF };
 })();

@@ -15,7 +15,7 @@
     var id = U.qs("id"), test = S.get.test(id);
     if (!test) { fail("Test not found", "We could not find that test."); return; }
     var st = T.getProgress(test);
-    if (!st) { window.location.replace("test-details.html?id=" + encodeURIComponent(id)); return; }
+    if (!st || !T.normalizePhone(st.candidate && st.candidate.phone)) { window.location.replace("test-details.html?id=" + encodeURIComponent(id)); return; }
 
     var n = test.questions.length;
     if (!n) { fail("No questions yet", "This test is awaiting its first questions."); return; }
@@ -182,8 +182,20 @@
       }
       // An offline browser cannot navigate to a page it has never opened.
       var card = document.querySelector(".q-card");
-      card.innerHTML = '<h1>Your result</h1><p></p><p role="status"></p><button type="button" class="btn btn-primary">Download PDF</button>';
+      els.panel.remove(); els.timer.hidden = true;
+      card.setAttribute("aria-label", "Completed test");
+      card.innerHTML = '<h1>Your result</h1><p></p><p role="status"></p>' +
+        '<details><summary class="btn btn-primary">View questions and explanations</summary><div class="review-list"></div></details>' +
+        '<p><button type="button" class="btn btn-ghost btn-sm">Download my result</button></p>';
       card.querySelector("p").textContent = result.title + " · " + result.marks + " / " + result.total;
+      if (result.candidate.phone) {
+        var phone = document.createElement("p");
+        phone.textContent = "Mobile number " + result.candidate.phone;
+        card.querySelector("p").after(phone);
+      }
+      card.querySelector("details").addEventListener("toggle", function () {
+        if (this.open) this.querySelector(".review-list").innerHTML = result.questions.map(function (q,i) { return T.reviewItem(q,i,result.answers[i]); }).join("");
+      }, {once:true});
       var status = card.querySelector("[role=status]");
       function delivery(state) {
         status.textContent = state === "sent" ? "Your result is saved in the admin panel." :
@@ -197,7 +209,7 @@
       });
       window.SujagResults.sendResult(result);
       card.querySelector("button").onclick = function () {
-        window.SujagReport.download(S.site, result.title, [Object.assign({}, result.candidate, { marks: result.marks, total: result.total })])
+        window.SujagReport.download(S.site, result.title, [{name:result.candidate.name, city:result.candidate.city, marks:result.marks, total:result.total}])
           .catch(function () { S.ui.toast("The PDF could not be downloaded. Please try again.", "error"); });
       };
     }

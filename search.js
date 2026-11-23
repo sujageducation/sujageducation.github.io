@@ -23,13 +23,21 @@
   S.search = function (q) {
     q = String(q || "").trim();
     var d = S.data;
-    var testCats = d.testCategories.map(function (c) { return { kind: "test", id: c.id, name: c.name, description: c.description, icon: c.icon }; });
+    var testCats = d.testCategories.concat(d.testGroups || []).map(function (c) { return { kind: "test", id: c.id, name: c.name, description: c.description, icon: c.icon }; });
     var noteCats = d.noteCategories.map(function (c) { return { kind: "note", id: c.id, name: c.name, description: "Free study notes in " + c.name + ".", icon: c.icon }; });
     return {
-      tests: run(d.tests, q, function (t) { return [t.title, t.description, (S.get.cat(t.category) || {}).name, t.difficulty].join(" "); }, "title"),
-      notes: run(d.notes, q, function (n) { return [n.title, n.description, (S.get.noteCat(n.category) || {}).name].join(" "); }, "title"),
-      books: run(d.books, q, function (b) { return [b.title, b.author, b.description, b.category].join(" "); }, "title"),
-      categories: run(testCats.concat(noteCats), q, function (c) { return c.name + " " + c.description; }, "name")
+      tests: run(d.tests, q, function (t) {
+        return [t.title, t.description, (S.get.cat(t.category) || {}).name, t.difficulty, S.catalogue.testKind(t) + "s", "practice tests",
+          S.catalogue.groupsFor(t.category).map(function (g) { return g.name; }).join(" "), t.tags, t.keywords,
+          (t.questions || []).map(function (question) { return question.q; }).join(" ")].join(" ");
+      }, "title"),
+      notes: run(d.notes, q, function (n) {
+        return ["study notes", n.title, n.description, n.intro, (S.get.noteCat(n.category) || {}).name, n.tags, n.keywords,
+          (n.sections || []).map(function (s) { return [s.heading].concat(s.points || []).join(" "); }).join(" ")].join(" ");
+      }, "title"),
+      books: run(d.books, q, function (b) { return ["books", b.title, b.author, b.description, b.longDescription, b.contents, b.category, b.tags, b.keywords].join(" "); }, "title"),
+      categories: run(testCats.concat(noteCats), q, function (c) { return c.name + " " + c.description; }, "name"),
+      updates: run((d.updates || []).filter(function (u) { return u.type === "info" && u.text; }), q, function (u) { return u.text; }, "text")
     };
   };
 
@@ -39,15 +47,23 @@
       '</p><span class="meta"><span>' + (c.kind === "test" ? "Mock tests" : "Notes") + "</span>" + icon("arrow-right", 18) + "</a>";
   }
 
+  function updateResult(u) {
+    var url;
+    try { url = new URL(u.href || "index.html", location.href); } catch (_) {}
+    var href = url && /^https?:$/.test(url.protocol) ? url.href : "index.html";
+    return '<article class="card item-card"><h3><a href="' + esc(href) + '">' + esc(u.text) + '</a></h3><p class="meta">' + esc(U.fmtDate(u.date)) + '</p></article>';
+  }
+
   U.ready(function () {
     var form = $("#search-form"); if (!form) return;
     var input = $("#s-input"), out = $("#s-results"), status = $("#s-status"), chips = $("#s-chips");
     var type = "all";
     var groups = [
-      { key: "tests", label: "Mock tests", card: cards.test, grid: true },
+      { key: "tests", label: "Tests and past papers", card: cards.test, grid: true },
       { key: "notes", label: "Notes", card: cards.note, grid: true },
       { key: "books", label: "Books", card: cards.book, grid: true },
-      { key: "categories", label: "Categories", card: categoryResult, grid: true }
+      { key: "categories", label: "Categories", card: categoryResult, grid: true },
+      { key: "updates", label: "Updates", card: updateResult, grid: true }
     ];
     var last = null;
 
@@ -56,8 +72,8 @@
       if (!q) {
         status.textContent = "";
         chips.innerHTML = "";
-        out.innerHTML = '<div class="empty"><h3>Search the whole site</h3><p>Type a topic, exam name or book title. Try one of these:</p><div class="chip-row" style="justify-content:center">' +
-          ["SPSC", "grammar", "Pakistan", "mathematics", "computer", "police"].map(function (w) { return '<a class="chip" href="search.html?q=' + encodeURIComponent(w) + '">' + esc(w) + "</a>"; }).join("") + "</div></div>";
+        out.innerHTML = '<div class="empty"><h3>Search the whole site</h3><p>Type a topic, exam name or book title.</p><div class="chip-row" style="justify-content:center">' +
+          S.keywordLinks() + "</div></div>";
         return;
       }
       last = S.search(q);

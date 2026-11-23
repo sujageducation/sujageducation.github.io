@@ -27,20 +27,19 @@
     else if (u.type === "note") { var n = S.get.note(u.id); if (!n) return null; title = n.title; href = "note-details.html?id=" + encodeURIComponent(n.id); }
     else if (u.type === "book") { var b = S.get.book(u.id); if (!b) return null; title = b.title; href = "book-details.html?id=" + encodeURIComponent(b.id); }
     else { title = u.text; href = u.href || "index.html"; }
-    return { kind: k, title: title, href: href, date: u.date };
+    return { kind: k, label: u.label || k.label, title: title, href: href, date: u.date };
   }
 
   function updateItem(x, clone) {
     return '<li><a class="upd" href="' + esc(x.href) + '"' + (clone ? ' tabindex="-1" aria-hidden="true"' : "") + '>' +
       '<span class="upd-icon tone-' + x.kind.tone + '">' + icon(x.kind.icon, 20) + "</span>" +
-      '<span class="upd-body"><span class="upd-title">' + esc(x.title) + '</span><span class="upd-meta"><b>' + esc(x.kind.label) + "</b> &middot; " + esc(U.fmtDate(x.date)) + "</span></span>" +
+      '<span class="upd-body"><span class="upd-title">' + esc(x.title) + '</span><span class="upd-meta"><b>' + esc(x.label) + "</b>" + (x.date ? " &middot; " + esc(U.fmtDate(x.date)) : "") + "</span></span>" +
       icon("arrow-right", 18) + "</a></li>";
   }
 
   function initUpdates() {
     var host = $("#updates"); if (!host) return;
-    var items = (S.data.updates || []).slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })
-      .map(resolveUpdate).filter(Boolean);
+    var items = S.catalogue.latestUpdates().map(resolveUpdate).filter(Boolean);
     if (!items.length) { host.hidden = true; return; }
 
     var vp = $("#updates-viewport"), list = $("#updates-list");
@@ -69,7 +68,7 @@
 
   U.ready(function () {
     $("#home-categories").innerHTML = HOME_CATEGORIES.map(S.get.cat).filter(Boolean).map(function (c, i) { return stagger(cards.category(c, i), i); }).join("");
-    $("#home-tests").innerHTML = S.data.tests.filter(function (t) { return t.featured; }).slice(0, 6).map(cards.test).join("");
+    $("#home-tests").innerHTML = S.data.tests.filter(function (t) { return t.featured; }).sort(S.catalogue.recentFirst).slice(0, 6).map(cards.test).join("");
     $("#home-notes").innerHTML = S.data.notes.filter(function (n) { return n.featured; }).slice(0, 3).map(cards.note).join("");
     $("#home-books").innerHTML = S.data.books.filter(function (b) { return b.featured; }).slice(0, 4).map(cards.book).join("");
     initUpdates();

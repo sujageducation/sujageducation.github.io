@@ -6,7 +6,6 @@
 (function () {
   "use strict";
   var S = window.SUJAG, U = S.util, $ = U.$, esc = U.esc, icon = S.icon, T = S.tests;
-  var LETTERS = ["A", "B", "C", "D", "E", "F"];
   var CIRC = 440;
 
   function summaryText(p) {
@@ -44,20 +43,6 @@
     });
   }
 
-  function reviewItem(q, i, a) {
-    var state = a === null || a === undefined ? "skip" : a === q.a ? "ok" : "bad";
-    var label = state === "ok" ? "Correct" : state === "bad" ? "Incorrect" : "Not answered";
-    var badge = state === "ok" ? "badge-easy" : state === "bad" ? "badge-hard" : "badge-neutral";
-    return '<article class="review-item r-' + state + '" data-state="' + state + '"><div class="review-q"><h3><small>Q' + (i + 1) + ".</small>" + esc(q.q) + '</h3><span class="badge ' + badge + '">' + label + "</span></div>" +
-      '<ul class="r-opts">' + q.o.map(function (o, k) {
-        var cls = k === q.a ? " is-correct" : k === a ? " is-wrong" : "";
-        var tag = k === q.a ? '<span class="tag">' + icon("check-circle", 16) + "<span>Correct answer</span></span>" : (k === a ? '<span class="tag">' + icon("x-circle", 16) + "<span>Your answer</span></span>" : "");
-        if (k === q.a && k === a) tag = '<span class="tag">' + icon("check-circle", 16) + "<span>Your answer, correct</span></span>";
-        return '<li class="r-opt' + cls + '"><span class="opt-key">' + LETTERS[k] + "</span><span>" + esc(o) + "</span>" + tag + "</li>";
-      }).join("") + "</ul>" +
-      (q.e ? '<div class="explain"><strong>Explanation: </strong>' + esc(q.e) + "</div>" : "") + "</article>";
-  }
-
   function resultPage(r) {
     var test = S.get.test(r.testId), cat = S.get.cat(r.category);
     S.setMeta({ title: "Result: " + r.title });
@@ -69,8 +54,9 @@
       '<div class="ring-label"><strong>' + T.fmtPct(r.percent) + "%</strong><span>Score</span></div></div>" +
       '<div class="result-info"><h1>' + esc(r.title) + "</h1>" +
       '<p class="who">' + (who ? "Candidate: " + esc(who) + " &middot; " : "") + esc(cat ? cat.name : "") + " &middot; " + esc(U.fmtDate(r.submittedAt, true)) + (r.autoSubmitted ? " &middot; Submitted automatically when time ended" : "") + "</p>" +
+      (r.candidate?.phone ? '<p class="who">Mobile number <bdi>' + esc(r.candidate.phone) + '</bdi></p>' : '') +
       '<p class="summary">' + esc(summaryText(r.percent)) + '</p><div class="row">' +
-      '<button type="button" class="btn btn-primary" id="download-result">' + icon("download", 18) + ' Download PDF</button></div>' +
+      '<button type="button" class="btn btn-primary" id="view-review" aria-controls="answer-review" aria-expanded="false">' + icon("eye", 18) + ' View questions and explanations</button></div>' +
       '<p class="delivery-note" id="delivery-note" role="status"></p></div></div></div>';
 
     var pct = function (x) { return r.total ? (x / r.total) * 100 : 0; };
@@ -84,13 +70,21 @@
       '<div class="stat"><span>Obtained marks</span><strong>' + r.marks + " / " + r.total + "</strong></div>" +
       '<div class="stat"><span>Time taken</span><strong style="font-size:1.25rem">' + esc(U.fmtDuration(r.timeTaken)) + "</strong></div></div>" +
       '<div class="split-bar" role="img" aria-label="' + r.correct + " correct, " + r.wrong + " incorrect, " + r.unanswered + ' unanswered"><span class="s-ok" data-w="' + pct(r.correct) + '"></span><span class="s-bad" data-w="' + pct(r.wrong) + '"></span><span class="s-skip" data-w="' + pct(r.unanswered) + '"></span></div>' +
-      '<div class="split-legend"><span><i style="background:var(--accent)"></i>Correct</span><span><i style="background:#d9695f"></i>Incorrect</span><span><i style="background:#c5ccc8"></i>Unanswered</span></div></section>' +
-      '<details id="answer-review" class="section-sm"><summary>Review answers and explanations</summary><div class="review-head">' +
+      '<div class="split-legend"><span><i style="background:var(--accent)"></i>Correct</span><span><i style="background:#d9695f"></i>Incorrect</span><span><i style="background:#c5ccc8"></i>Unanswered</span></div>' +
+      '<p><button type="button" class="btn btn-ghost btn-sm" id="download-result">' + icon("download", 16) + ' Download my result</button></p></section>' +
+      '<details id="answer-review" class="section-sm"><summary>Questions and explanations</summary><div class="review-head">' +
       '<div class="filter-row" style="margin:0" id="rev-filter"><button class="chip" type="button" data-f="all" aria-pressed="true">All</button><button class="chip" type="button" data-f="ok" aria-pressed="false">Correct</button><button class="chip" type="button" data-f="bad" aria-pressed="false">Incorrect</button><button class="chip" type="button" data-f="skip" aria-pressed="false">Unanswered</button></div></div>' +
-      '<div class="review-list" id="rev-list">' + r.questions.map(function (q, i) { return reviewItem(q, i, r.answers[i]); }).join("") + "</div></details>" +
+      '<div class="review-list" id="rev-list">' + r.questions.map(function (q, i) { return T.reviewItem(q, i, r.answers[i]); }).join("") + "</div></details>" +
       '<section class="section-sm" id="next-steps"></section>' +
       "</div>";
 
+    var review = $("#answer-review"), trigger = $("#view-review");
+    trigger.onclick = function () {
+      review.open = true;
+      review.querySelector("summary").focus();
+      review.scrollIntoView({block:"start"});
+    };
+    review.addEventListener("toggle", function () { trigger.setAttribute("aria-expanded", String(review.open)); });
     var download = $("#download-result"), delivery = $("#delivery-note");
     function showDelivery(state) {
       var message = state === "sent" ? "Your result is saved in the Sujag Education admin panel."
@@ -110,9 +104,9 @@
     download.onclick = async function () {
       download.disabled = true; download.textContent = "Preparing PDF…";
       try {
-        await window.SujagReport.download(S.site, r.title, [Object.assign({}, r.candidate, {marks:r.marks, total:r.total})]);
+        await window.SujagReport.download(S.site, r.title, [{name:r.candidate?.name, city:r.candidate?.city, marks:r.marks, total:r.total}]);
       } catch (error) { S.ui.toast(error.message || "The PDF could not be downloaded. Please try again.", "error"); }
-      finally { download.disabled = false; download.innerHTML = icon("download", 18) + " Download PDF"; }
+      finally { download.disabled = false; download.innerHTML = icon("download", 16) + " Download my result"; }
     };
 
     // Animate ring and bar once on load
@@ -130,12 +124,11 @@
 
     // Next steps: other attempts and related tests
     var others = T.getResults().filter(function (x) { return x.testId === r.testId; }).slice(0, 5);
-    var more = S.data.tests.filter(function (t) { return t.id !== r.testId; })
-      .sort(function (a, b) { return (b.category === r.category) - (a.category === r.category); }).slice(0, 3);
+    var more = S.catalogue.relatedTests({id:r.testId, category:test ? test.category : r.category}, 3);
     $("#next-steps").innerHTML =
       (others.length > 1 ? '<h2>Your attempts on this test</h2><div class="panel"><div class="table-wrap"><table class="history-table"><thead><tr><th>Date</th><th>Score</th><th>%</th></tr></thead><tbody>' +
         others.map(function (x) { return '<tr class="' + (x.rid === r.rid ? "is-current" : "") + '"><td>' + esc(U.fmtDate(x.submittedAt, true)) + "</td><td>" + x.marks + " / " + x.total + "</td><td>" + T.fmtPct(x.percent) + "%</td></tr>"; }).join("") + "</tbody></table></div></div>" : "") +
-      '<div class="section-head" style="margin-top:36px"><h2>Keep practising</h2><a class="link-arrow" href="mock-tests.html">All mock tests ' + icon("arrow-right", 18) + '</a></div><div class="grid">' + more.map(S.cards.test).join("") + "</div>";
+      (more.length ? '<div class="section-head" style="margin-top:36px"><h2>Related tests</h2><a class="link-arrow" href="mock-tests.html">All mock tests ' + icon("arrow-right", 18) + '</a></div><div class="grid">' + more.map(S.cards.test).join("") + "</div>" : "");
     if (test) $("#next-steps").insertAdjacentHTML("afterbegin", '<p><a href="test-details.html?id=' + encodeURIComponent(r.testId) + '&amp;retake=' + encodeURIComponent(r.rid) + '">Retake this test</a></p>');
     if (!test) $("#next-steps").insertAdjacentHTML("afterbegin", '<div class="notice notice-warn" style="margin-bottom:20px"><span>' + icon("alert", 18) + "</span><p>This test is no longer in the catalogue, so Retake is unavailable. Your saved review above is still complete.</p></div>");
   }
