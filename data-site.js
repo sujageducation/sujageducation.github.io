@@ -21,8 +21,8 @@ SUJAG.site = {
     "enabled": true,
     "title": "Join our community",
     "text": "Get daily mock tests, notes and job updates on WhatsApp.",
-    "groupLabel": "Join our Premium WhatsApp group",
-    "channelLabel": "Join our free WhatsApp Channel ",
-    "channelUrl": "https://whatsapp.com/channel/0029VaUP0Fd3WHTaC7GNM73C"
+    "groupLabel": "Join our premium WhatsApp ",
+    "channelLabel": "Join our free WhatsApp Group ",
+    "channelUrl": "https://chat.whatsapp.com/KBbY5p1HSSS02Yq3IerDxH?s=cl&p=a&iam=2"
   }
 };
