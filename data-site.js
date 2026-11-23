@@ -16,5 +16,13 @@ SUJAG.site = {
   },
   "contactEndpoint": "",
   "currency": "Rs.",
-  "demoMode": true
+  "demoMode": true,
+  "community": {
+    "enabled": true,
+    "title": "Join our community",
+    "text": "Get daily mock tests, notes and job updates on WhatsApp.",
+    "groupLabel": "Join our Premium WhatsApp group",
+    "channelLabel": "Join our free WhatsApp Channel ",
+    "channelUrl": "https://whatsapp.com/channel/0029VaUP0Fd3WHTaC7GNM73C"
+  }
 };
