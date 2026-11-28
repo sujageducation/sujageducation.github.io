@@ -3909,7 +3909,7 @@ SUJAG.data.tests = [
     "category": "other-govt",
     "duration": 90,
     "difficulty": "Medium",
-    "featured": false,
+    "featured": true,
     "description": "Practice test with 100 questions.",
     "questions": [
       {
@@ -5014,6 +5014,8 @@ SUJAG.data.tests = [
       }
     ],
     "createdAt": "2026-11-28T12:37:46.064Z",
-    "updatedAt": "2026-11-28T12:37:46.064Z"
+    "updatedAt": "2026-11-28T12:38:57.835Z",
+    "groupText": "UEP Field Production Trainee\nجيڪي دوست جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 موڪ ٽيسٽ ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي.",
+    "groupPhone": "923253061605"
   }
 ];
