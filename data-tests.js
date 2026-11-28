@@ -1686,7 +1686,7 @@ SUJAG.data.tests = [
   },
   {
     "id": "field-production-trainee-uep",
-    "title": "Field Production Trainee - UEP 2",
+    "title": "Field Production Trainee - UEP 01",
     "kind": "mock",
     "category": "other-govt",
     "duration": 100,
@@ -3896,7 +3896,7 @@ SUJAG.data.tests = [
       }
     ],
     "createdAt": "2026-11-23T10:37:30.398Z",
-    "updatedAt": "2026-11-28T12:21:11.768Z",
+    "updatedAt": "2026-11-28T12:35:56.476Z",
     "groupUrl": "https://wa.me/923253061605",
     "instructions": [],
     "groupText": "UEP Field Production Trainee\nجيڪي دوست جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 موڪ ٽيسٽ ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي.",
