@@ -3901,5 +3901,1119 @@ SUJAG.data.tests = [
     "instructions": [],
     "groupText": "UEP Field Production Trainee\nجيڪي دوست جي تياري ڪري رهيا آهن، اهي اسان جو Paid WhatsApp گروپ جوائن ڪري سگهن ٿا، جتي اوهان کي نوٽس ۽ هر هفتي 2 موڪ ٽيسٽ ڏنيون وينديون. گروپ جوائن ڪرڻ جي فيس صرف 300 رپيا آهي.",
     "groupPhone": "923253061605"
+  },
+  {
+    "id": "field-production-trainee-uep-02",
+    "title": "Field Production Trainee - UEP 02",
+    "kind": "mock",
+    "category": "other-govt",
+    "duration": 90,
+    "difficulty": "Medium",
+    "featured": false,
+    "description": "Practice test with 100 questions.",
+    "questions": [
+      {
+        "q": "Which type of bond exists between the carbon and hydrogen atoms in methane?",
+        "o": [
+          "Ionic bond",
+          "Metallic bond",
+          "Covalent bond",
+          "Hydrogen bond"
+        ],
+        "a": 2,
+        "e": "Carbon and hydrogen share electrons to form covalent bonds."
+      },
+      {
+        "q": "How many molecules are present in one mole of a substance?",
+        "o": [
+          "6.022 × 1023",
+          "3.011 × 1023",
+          "9.8 × 1023",
+          "1.602 × 1019"
+        ],
+        "a": 0,
+        "e": "One mole contains approximately 6.022 × 1023 elementary entities, known as Avogadro's number."
+      },
+      {
+        "q": "What is the oxidation number of sulfur in H2SO4?",
+        "o": [
+          "+2",
+          "+4",
+          "−2",
+          "+6"
+        ],
+        "a": 3,
+        "e": "The sum of oxidation numbers is zero: 2(+1) + S + 4(−2) = 0."
+      },
+      {
+        "q": "Which process is used to separate crude oil into different petroleum products?",
+        "o": [
+          "Filtration",
+          "Fractional distillation",
+          "Crystallization",
+          "Sublimation"
+        ],
+        "a": 1,
+        "e": "Fractional distillation separates petroleum components according to their boiling ranges."
+      },
+      {
+        "q": "What is the general formula of open-chain alkanes?",
+        "o": [
+          "CnH2n",
+          "CnH2n−2",
+          "CnH2n+2",
+          "CnHn"
+        ],
+        "a": 2,
+        "e": "Alkanes are saturated hydrocarbons with the general formula CnH2n+2."
+      },
+      {
+        "q": "Which gas is commonly produced during the incomplete combustion of hydrocarbons?",
+        "o": [
+          "Carbon monoxide",
+          "Oxygen",
+          "Nitrogen",
+          "Helium"
+        ],
+        "a": 0,
+        "e": "Insufficient oxygen can cause incomplete combustion, producing carbon monoxide."
+      },
+      {
+        "q": "What is the molar mass of calcium carbonate (CaCO3)?",
+        "o": [
+          "56 g/mol",
+          "84 g/mol",
+          "120 g/mol",
+          "100 g/mol"
+        ],
+        "a": 3,
+        "e": "Ca = 40, C = 12 and O3 = 48. Their total is approximately 100 g/mol."
+      },
+      {
+        "q": "A catalyst increases the rate of a chemical reaction by:",
+        "o": [
+          "Increasing the mass of reactants",
+          "Lowering activation energy",
+          "Increasing the equilibrium constant",
+          "Increasing the molecular mass"
+        ],
+        "a": 1,
+        "e": "A catalyst provides an alternative reaction pathway with lower activation energy."
+      },
+      {
+        "q": "Which of the following compounds is an unsaturated hydrocarbon?",
+        "o": [
+          "Methane",
+          "Propane",
+          "Ethene",
+          "Butane"
+        ],
+        "a": 2,
+        "e": "Ethene contains a carbon-carbon double bond."
+      },
+      {
+        "q": "Temporary hardness of water is mainly caused by:",
+        "o": [
+          "Sodium chloride",
+          "Potassium nitrate",
+          "Calcium sulfate",
+          "Calcium and magnesium bicarbonates"
+        ],
+        "a": 3,
+        "e": "Dissolved calcium and magnesium bicarbonates cause temporary hardness."
+      },
+      {
+        "q": "A solution contains 2 moles of solute in 500 mL of solution. What is its molarity?",
+        "o": [
+          "4 M",
+          "2 M",
+          "1 M",
+          "0.5 M"
+        ],
+        "a": 0,
+        "e": "Molarity = Moles ÷ Volume in litres = 2 ÷ 0.5 = 4 M."
+      },
+      {
+        "q": "Which process involves the loss of electrons?",
+        "o": [
+          "Reduction",
+          "Oxidation",
+          "Neutralization",
+          "Condensation"
+        ],
+        "a": 1,
+        "e": "Oxidation is the loss of electrons, while reduction is the gain of electrons."
+      },
+      {
+        "q": "Which compound is commonly used to remove acidic gases from natural gas?",
+        "o": [
+          "Sodium chloride",
+          "Calcium carbonate",
+          "Ethanol",
+          "Monoethanolamine"
+        ],
+        "a": 3,
+        "e": "Amine solutions such as monoethanolamine absorb acidic gases including H2S and CO2."
+      },
+      {
+        "q": "What is the hydrogen ion concentration of a solution having pH 4?",
+        "o": [
+          "10−2 mol/L",
+          "10−7 mol/L",
+          "10−4 mol/L",
+          "104 mol/L"
+        ],
+        "a": 2,
+        "e": "Hydrogen ion concentration = 10−pH = 10−4 mol/L."
+      },
+      {
+        "q": "Which law states that the pressure of a fixed amount of gas is inversely proportional to its volume at constant temperature?",
+        "o": [
+          "Boyle's law",
+          "Charles's law",
+          "Avogadro's law",
+          "Faraday's law"
+        ],
+        "a": 0,
+        "e": "According to Boyle's law, PV remains constant at constant temperature. Physics – 20 MCQs"
+      },
+      {
+        "q": "A force of 60 N acts on an object of mass 12 kg. Calculate its acceleration.",
+        "o": [
+          "3 m/s2",
+          "5 m/s2",
+          "6 m/s2",
+          "8 m/s2"
+        ],
+        "a": 1,
+        "e": "Acceleration = Force ÷ Mass = 60 ÷ 12 = 5 m/s2."
+      },
+      {
+        "q": "A pressure of 200 Pa acts on an area of 0.5 m2. What is the applied force?",
+        "o": [
+          "400 N",
+          "200 N",
+          "50 N",
+          "100 N"
+        ],
+        "a": 3,
+        "e": "Force = Pressure × Area = 200 × 0.5 = 100 N."
+      },
+      {
+        "q": "Which principle explains the decrease in static pressure when the speed of an ideal fluid increases along a horizontal streamline?",
+        "o": [
+          "Bernoulli's principle",
+          "Pascal's principle",
+          "Hooke's law",
+          "Coulomb's law"
+        ],
+        "a": 0,
+        "e": "Bernoulli's principle relates fluid velocity, pressure and elevation."
+      },
+      {
+        "q": "A machine performs 2,400 J of work in 30 seconds. What is its power?",
+        "o": [
+          "60 W",
+          "120 W",
+          "80 W",
+          "100 W"
+        ],
+        "a": 2,
+        "e": "Power = Work ÷ Time = 2,400 ÷ 30 = 80 W."
+      },
+      {
+        "q": "Two resistors of 6 Ω and 3 Ω are connected in parallel. Their equivalent resistance is:",
+        "o": [
+          "9 Ω",
+          "2 Ω",
+          "3 Ω",
+          "4.5 Ω"
+        ],
+        "a": 1,
+        "e": "1/R = 1/6 + 1/3 = 1/2. Therefore, R = 2 Ω."
+      },
+      {
+        "q": "What is the kinetic energy of a 4 kg object moving at 5 m/s?",
+        "o": [
+          "20 J",
+          "25 J",
+          "100 J",
+          "50 J"
+        ],
+        "a": 3,
+        "e": "KE = 1⁄2mv2 = 1⁄2 × 4 × 25 = 50 J."
+      },
+      {
+        "q": "Which instrument measures the pressure difference between two points in a fluid system?",
+        "o": [
+          "Differential manometer",
+          "Hygrometer",
+          "Tachometer",
+          "Calorimeter"
+        ],
+        "a": 0,
+        "e": "A differential manometer measures the difference in pressure between two locations."
+      },
+      {
+        "q": "A transformer has 500 primary turns and 100 secondary turns. If the primary voltage is 220 V, what is the ideal secondary voltage?",
+        "o": [
+          "110 V",
+          "55 V",
+          "44 V",
+          "22 V"
+        ],
+        "a": 2,
+        "e": "Vs/Vp = Ns/Np. Therefore, Vs = 220 × 100/500 = 44 V."
+      },
+      {
+        "q": "The density of a liquid is 800 kg/m3. What is the mass of 0.25 m3 of this liquid?",
+        "o": [
+          "100 kg",
+          "200 kg",
+          "400 kg",
+          "3,200 kg"
+        ],
+        "a": 1,
+        "e": "Mass = Density × Volume = 800 × 0.25 = 200 kg."
+      },
+      {
+        "q": "Which mode of heat transfer occurs mainly through the bulk movement of liquids and gases?",
+        "o": [
+          "Radiation",
+          "Conduction",
+          "Reflection",
+          "Convection"
+        ],
+        "a": 3,
+        "e": "Convection transfers heat through the movement of fluids."
+      },
+      {
+        "q": "An electric heater operates at 220 V and draws a current of 5 A. Its power is:",
+        "o": [
+          "1,100 W",
+          "440 W",
+          "225 W",
+          "44 W"
+        ],
+        "a": 0,
+        "e": "Electrical power = Voltage × Current = 220 × 5 = 1,100 W."
+      },
+      {
+        "q": "The buoyant force acting on an immersed object is explained by:",
+        "o": [
+          "Newton's second law",
+          "Ohm's law",
+          "Archimedes' principle",
+          "Boyle's law"
+        ],
+        "a": 2,
+        "e": "The buoyant force equals the weight of the displaced fluid."
+      },
+      {
+        "q": "A wave has a frequency of 50 Hz and a wavelength of 4 m. What is its speed?",
+        "o": [
+          "100 m/s",
+          "200 m/s",
+          "12.5 m/s",
+          "400 m/s"
+        ],
+        "a": 1,
+        "e": "Wave speed = Frequency × Wavelength = 50 × 4 = 200 m/s."
+      },
+      {
+        "q": "Which quantity represents a fluid's resistance to flow?",
+        "o": [
+          "Density",
+          "Pressure",
+          "Temperature",
+          "Viscosity"
+        ],
+        "a": 3,
+        "e": "Viscosity measures a fluid's internal resistance to deformation and flow."
+      },
+      {
+        "q": "A machine receives 500 J of energy and produces 400 J of useful work. What is its efficiency?",
+        "o": [
+          "80%",
+          "75%",
+          "90%",
+          "125%"
+        ],
+        "a": 0,
+        "e": "Efficiency = Useful output ÷ Input × 100 = 80%."
+      },
+      {
+        "q": "What is the momentum of a 10 kg object moving at 6 m/s?",
+        "o": [
+          "30 kg·m/s",
+          "16 kg·m/s",
+          "60 kg·m/s",
+          "120 kg·m/s"
+        ],
+        "a": 2,
+        "e": "Momentum = Mass × Velocity = 10 × 6 = 60 kg·m/s."
+      },
+      {
+        "q": "At what temperature are Celsius and Fahrenheit readings numerically equal?",
+        "o": [
+          "0°",
+          "−40°",
+          "32°",
+          "100°"
+        ],
+        "a": 1,
+        "e": "−40°C is equal to −40°F."
+      },
+      {
+        "q": "What is the SI unit of dynamic viscosity?",
+        "o": [
+          "Newton",
+          "Pascal",
+          "Joule-second",
+          "Pascal-second"
+        ],
+        "a": 3,
+        "e": "Dynamic viscosity is measured in pascal-seconds (Pa·s)."
+      },
+      {
+        "q": "A pump raises 20 kg of water to a height of 5 metres. Calculate the gain in gravitational potential energy, taking g = 10 m/s2.",
+        "o": [
+          "1,000 J",
+          "500 J",
+          "200 J",
+          "100 J"
+        ],
+        "a": 0,
+        "e": "Potential energy = mgh = 20 × 10 × 5 = 1,000 J."
+      },
+      {
+        "q": "Which quantity remains constant in a steady flow of an incompressible fluid through a closed pipe without branches or leaks?",
+        "o": [
+          "Fluid velocity",
+          "Fluid pressure",
+          "Volumetric flow rate",
+          "Pipe diameter"
+        ],
+        "a": 2,
+        "e": "According to the continuity equation, A1v1 = A2v2. English – 30 MCQs"
+      },
+      {
+        "q": "Choose the synonym of \"Meticulous\".",
+        "o": [
+          "Careless",
+          "Thorough",
+          "Ordinary",
+          "Confused"
+        ],
+        "a": 1,
+        "e": "Meticulous means extremely careful and attentive to detail."
+      },
+      {
+        "q": "Choose the antonym of \"Scarce\".",
+        "o": [
+          "Limited",
+          "Rare",
+          "Insufficient",
+          "Abundant"
+        ],
+        "a": 3,
+        "e": "Abundant means available in large quantities."
+      },
+      {
+        "q": "Neither the supervisor nor the workers _ willing to accept the proposal.",
+        "o": [
+          "Were",
+          "Was",
+          "Is",
+          "Has"
+        ],
+        "a": 0,
+        "e": "The verb agrees with the nearer plural subject, workers."
+      },
+      {
+        "q": "Had he followed the instructions, the accident _ avoided.",
+        "o": [
+          "Will be",
+          "Would be",
+          "Would have been",
+          "Has been"
+        ],
+        "a": 2,
+        "e": "This is a third conditional sentence referring to an unreal past situation."
+      },
+      {
+        "q": "Choose the correctly spelled word.",
+        "o": [
+          "Accomodation",
+          "Accommodation",
+          "Acommodation",
+          "Accommadation"
+        ],
+        "a": 1,
+        "e": "Accommodation contains double C and double M."
+      },
+      {
+        "q": "The manager insisted _ checking the equipment before operation.",
+        "o": [
+          "At",
+          "For",
+          "To",
+          "On"
+        ],
+        "a": 3,
+        "e": "The correct construction is insist on doing something."
+      },
+      {
+        "q": "Choose the synonym of \"Obsolete\".",
+        "o": [
+          "Outdated",
+          "Modern",
+          "Effective",
+          "Valuable"
+        ],
+        "a": 0,
+        "e": "Obsolete means no longer in use or outdated."
+      },
+      {
+        "q": "Choose the correct passive voice: \"They are inspecting the pipeline.\"",
+        "o": [
+          "The pipeline has inspected.",
+          "The pipeline was inspected.",
+          "The pipeline is being inspected.",
+          "The pipeline is inspecting."
+        ],
+        "a": 2,
+        "e": "Present continuous passive uses is/am/are + being + past participle."
+      },
+      {
+        "q": "Choose the antonym of \"Rigid\".",
+        "o": [
+          "Hard",
+          "Flexible",
+          "Strict",
+          "Firm"
+        ],
+        "a": 1,
+        "e": "Flexible means capable of bending or adapting."
+      },
+      {
+        "q": "No sooner had the machine started _ it stopped again.",
+        "o": [
+          "When",
+          "Then",
+          "While",
+          "Than"
+        ],
+        "a": 3,
+        "e": "The correct correlative construction is no sooner...than."
+      },
+      {
+        "q": "The word \"Inevitable\" means:",
+        "o": [
+          "Unavoidable",
+          "Unnecessary",
+          "Uncertain",
+          "Unimportant"
+        ],
+        "a": 0,
+        "e": "Inevitable describes something that cannot be avoided."
+      },
+      {
+        "q": "Each of the candidates _ submitted an application.",
+        "o": [
+          "Have",
+          "Are",
+          "Has",
+          "Were"
+        ],
+        "a": 2,
+        "e": "Each is singular and therefore takes has."
+      },
+      {
+        "q": "Choose the correct indirect speech: He said, \"I will complete the work tomorrow.\"",
+        "o": [
+          "He said that he will complete the work tomorrow.",
+          "He said that he would complete the work the following day.",
+          "He said that I would complete the work tomorrow.",
+          "He said that he completed the work yesterday."
+        ],
+        "a": 1,
+        "e": "In standard backshifted reported speech, will becomes would and tomorrow becomes the following day."
+      },
+      {
+        "q": "Choose the synonym of \"Diligent\".",
+        "o": [
+          "Lazy",
+          "Negligent",
+          "Unskilled",
+          "Hardworking"
+        ],
+        "a": 3,
+        "e": "Diligent means hardworking and careful."
+      },
+      {
+        "q": "The technician is responsible _ maintaining the equipment.",
+        "o": [
+          "For",
+          "Of",
+          "At",
+          "With"
+        ],
+        "a": 0,
+        "e": "Responsible for is the correct expression."
+      },
+      {
+        "q": "Choose the correct sentence.",
+        "o": [
+          "The informations are useful.",
+          "The information are useful.",
+          "The information is useful.",
+          "The informations is useful."
+        ],
+        "a": 2,
+        "e": "Information is an uncountable noun and takes a singular verb."
+      },
+      {
+        "q": "Choose the antonym of \"Transparent\".",
+        "o": [
+          "Clear",
+          "Opaque",
+          "Visible",
+          "Bright"
+        ],
+        "a": 1,
+        "e": "Opaque describes something that does not allow light to pass through."
+      },
+      {
+        "q": "By next month, she _ her training.",
+        "o": [
+          "Completes",
+          "Completed",
+          "Has completed",
+          "Will have completed"
+        ],
+        "a": 3,
+        "e": "Future perfect describes an action completed before a specified future time."
+      },
+      {
+        "q": "The idiom \"Once in a blue moon\" means:",
+        "o": [
+          "Very rarely",
+          "Every night",
+          "Frequently",
+          "Immediately"
+        ],
+        "a": 0,
+        "e": "The idiom refers to something that happens very rarely."
+      },
+      {
+        "q": "Choose the correctly spelled word.",
+        "o": [
+          "Priviledge",
+          "Privilage",
+          "Privilege",
+          "Privelege"
+        ],
+        "a": 2,
+        "e": "Privilege is the correct spelling."
+      },
+      {
+        "q": "He prefers working in the field _ working in the office.",
+        "o": [
+          "Than",
+          "To",
+          "From",
+          "Over than"
+        ],
+        "a": 1,
+        "e": "The standard construction is prefer one thing to another."
+      },
+      {
+        "q": "Choose the synonym of \"Mitigate\".",
+        "o": [
+          "Increase",
+          "Destroy",
+          "Ignore",
+          "Reduce"
+        ],
+        "a": 3,
+        "e": "Mitigate means to reduce the severity or harmful effects of something."
+      },
+      {
+        "q": "If I _ you, I would accept the opportunity.",
+        "o": [
+          "Were",
+          "Am",
+          "Have been",
+          "Will be"
+        ],
+        "a": 0,
+        "e": "Were is traditionally used for hypothetical situations in the second conditional."
+      },
+      {
+        "q": "The equipment, along with its accessories, _ delivered yesterday.",
+        "o": [
+          "Were",
+          "Have been",
+          "Was",
+          "Are"
+        ],
+        "a": 2,
+        "e": "The main subject, equipment, is singular."
+      },
+      {
+        "q": "Choose the antonym of \"Hostile\".",
+        "o": [
+          "Aggressive",
+          "Friendly",
+          "Harmful",
+          "Violent"
+        ],
+        "a": 1,
+        "e": "Friendly is the opposite of hostile."
+      },
+      {
+        "q": "Hardly had the workers reached the site _ it began to rain.",
+        "o": [
+          "Than",
+          "Then",
+          "While",
+          "When"
+        ],
+        "a": 3,
+        "e": "The correct construction is hardly...when."
+      },
+      {
+        "q": "A person who cannot read or write is called:",
+        "o": [
+          "Illiterate",
+          "Immigrant",
+          "Introvert",
+          "Intellectual"
+        ],
+        "a": 0,
+        "e": "An illiterate person cannot read or write."
+      },
+      {
+        "q": "Choose the correct passive voice: \"Someone has damaged the valve.\"",
+        "o": [
+          "The valve had damaged.",
+          "The valve was damaging.",
+          "The valve has been damaged.",
+          "The valve is damaged by someone yesterday."
+        ],
+        "a": 2,
+        "e": "Present perfect passive uses has/have + been + past participle."
+      },
+      {
+        "q": "Choose the meaning of \"To turn a blind eye\".",
+        "o": [
+          "To lose eyesight",
+          "To deliberately ignore something",
+          "To observe carefully",
+          "To become confused"
+        ],
+        "a": 1,
+        "e": "Turning a blind eye means intentionally ignoring something."
+      },
+      {
+        "q": "The supervisor recommended that the worker _ protective equipment.",
+        "o": [
+          "Wears",
+          "Wore",
+          "Wearing",
+          "Wear"
+        ],
+        "a": 3,
+        "e": "The mandative subjunctive uses the base form of the verb after recommended that. Basic Arithmetic – 15 MCQs"
+      },
+      {
+        "q": "A worker's salary increases from Rs. 25,000 to Rs. 28,750. What is the percentage increase?",
+        "o": [
+          "12%",
+          "18%",
+          "15%",
+          "20%"
+        ],
+        "a": 2,
+        "e": "Percentage increase = 3,750 ÷ 25,000 × 100 = 15%."
+      },
+      {
+        "q": "A tank contains 600 litres of oil. If 35% is removed, how much oil remains?",
+        "o": [
+          "390 litres",
+          "210 litres",
+          "350 litres",
+          "420 litres"
+        ],
+        "a": 0,
+        "e": "Remaining oil = 600 × 65/100 = 390 litres."
+      },
+      {
+        "q": "If 8 workers complete a task in 15 days, how many days will 12 equally efficient workers take?",
+        "o": [
+          "8 days",
+          "12 days",
+          "20 days",
+          "10 days"
+        ],
+        "a": 3,
+        "e": "Days = 8 × 15 ÷ 12 = 10."
+      },
+      {
+        "q": "The average of five numbers is 24. If one number is removed, the average of the remaining four becomes 22. What is the removed number?",
+        "o": [
+          "28",
+          "32",
+          "30",
+          "34"
+        ],
+        "a": 1,
+        "e": "Removed number = 5 × 24 − 4 × 22 = 32."
+      },
+      {
+        "q": "A train travels 180 km in 2 hours and 15 minutes. What is its average speed?",
+        "o": [
+          "90 km/h",
+          "75 km/h",
+          "80 km/h",
+          "85 km/h"
+        ],
+        "a": 2,
+        "e": "2 hours and 15 minutes = 2.25 hours. Speed = 180 ÷ 2.25 = 80 km/h."
+      },
+      {
+        "q": "Solve: 3x − 7 = 2x + 9.",
+        "o": [
+          "16",
+          "12",
+          "14",
+          "18"
+        ],
+        "a": 0,
+        "e": "3x − 2x = 9 + 7. Therefore, x = 16."
+      },
+      {
+        "q": "A product is purchased for Rs. 1,200 and sold for Rs. 1,500. What is the profit percentage?",
+        "o": [
+          "20%",
+          "30%",
+          "15%",
+          "25%"
+        ],
+        "a": 3,
+        "e": "Profit percentage = 300 ÷ 1,200 × 100 = 25%."
+      },
+      {
+        "q": "Find the least common multiple (LCM) of 12, 18 and 24.",
+        "o": [
+          "48",
+          "72",
+          "96",
+          "144"
+        ],
+        "a": 1,
+        "e": "LCM = 23 × 32 = 72."
+      },
+      {
+        "q": "Two numbers are in the ratio 5:7, and their difference is 18. What is their sum?",
+        "o": [
+          "90",
+          "96",
+          "108",
+          "120"
+        ],
+        "a": 2,
+        "e": "Two ratio units equal 18, so one unit equals 9. Sum = 12 × 9 = 108."
+      },
+      {
+        "q": "A pipe fills a tank in 6 hours, while another pipe empties it in 12 hours. How long will the empty tank take to fill if both pipes are open?",
+        "o": [
+          "12 hours",
+          "8 hours",
+          "9 hours",
+          "18 hours"
+        ],
+        "a": 0,
+        "e": "Net filling rate = 1/6 − 1/12 = 1/12 tank per hour."
+      },
+      {
+        "q": "What is the compound interest on Rs. 10,000 at 10% per annum for two years, compounded annually?",
+        "o": [
+          "Rs. 2,000",
+          "Rs. 1,100",
+          "Rs. 2,200",
+          "Rs. 2,100"
+        ],
+        "a": 3,
+        "e": "Compound interest = 10,000 × (1.1)2 − 10,000 = Rs. 2,100."
+      },
+      {
+        "q": "Solve: (18 ÷ 3)2 − 4 × 5.",
+        "o": [
+          "12",
+          "16",
+          "20",
+          "24"
+        ],
+        "a": 1,
+        "e": "62 − 20 = 36 − 20 = 16."
+      },
+      {
+        "q": "The length and width of a rectangular field are 45 m and 30 m. What is its area in hectares?",
+        "o": [
+          "1.35 hectares",
+          "0.0135 hectares",
+          "0.135 hectares",
+          "13.5 hectares"
+        ],
+        "a": 2,
+        "e": "Area = 1,350 m2. One hectare equals 10,000 m2, so the area is 0.135 hectares."
+      },
+      {
+        "q": "A machine produces 240 units in 8 hours. How many units will it produce in 12 hours at the same rate?",
+        "o": [
+          "360",
+          "300",
+          "320",
+          "400"
+        ],
+        "a": 0,
+        "e": "Production rate = 30 units per hour. In 12 hours, it produces 360 units."
+      },
+      {
+        "q": "Find the next number in the series: 3, 8, 15, 24, 35, _.",
+        "o": [
+          "42",
+          "45",
+          "46",
+          "48"
+        ],
+        "a": 3,
+        "e": "The differences are 5, 7, 9, 11 and 13. Therefore, 35 + 13 = 48. General Knowledge – 20 MCQs"
+      },
+      {
+        "q": "In which year was natural gas discovered at Sui, Balochistan?",
+        "o": [
+          "1947",
+          "1952",
+          "1960",
+          "1965"
+        ],
+        "a": 1,
+        "e": "The Sui natural gas field was discovered in 1952."
+      },
+      {
+        "q": "Which organization regulates the downstream oil and gas sector in Pakistan?",
+        "o": [
+          "NEPRA",
+          "WAPDA",
+          "OGRA",
+          "PEMRA"
+        ],
+        "a": 2,
+        "e": "OGRA stands for Oil and Gas Regulatory Authority."
+      },
+      {
+        "q": "What does HSE stand for in the petroleum industry?",
+        "o": [
+          "Health, Safety and Environment",
+          "High Security Equipment",
+          "Hydrocarbon Safety Engineering",
+          "Health Service Evaluation"
+        ],
+        "a": 0,
+        "e": "HSE refers to workplace health, safety and environmental protection."
+      },
+      {
+        "q": "One standard barrel of crude oil contains approximately how many litres?",
+        "o": [
+          "100 litres",
+          "120 litres",
+          "200 litres",
+          "159 litres"
+        ],
+        "a": 3,
+        "e": "One petroleum barrel equals 42 US gallons, approximately 159 litres."
+      },
+      {
+        "q": "The Constitution of Pakistan currently in force was originally adopted in:",
+        "o": [
+          "1956",
+          "1973",
+          "1962",
+          "1985"
+        ],
+        "a": 1,
+        "e": "Pakistan's present Constitution was adopted in 1973."
+      },
+      {
+        "q": "Which equipment separates oil, gas and water from a produced well stream?",
+        "o": [
+          "Compressor",
+          "Heat exchanger",
+          "Three-phase separator",
+          "Centrifugal pump"
+        ],
+        "a": 2,
+        "e": "A three-phase separator divides the produced fluid into oil, gas and water phases."
+      },
+      {
+        "q": "In which year was OPEC established?",
+        "o": [
+          "1960",
+          "1955",
+          "1970",
+          "1975"
+        ],
+        "a": 0,
+        "e": "OPEC was established in Baghdad in September 1960."
+      },
+      {
+        "q": "What does SCADA stand for?",
+        "o": [
+          "System Control and Digital Automation",
+          "Safety Control and Data Analysis",
+          "Standard Computer and Data Application",
+          "Supervisory Control and Data Acquisition"
+        ],
+        "a": 3,
+        "e": "SCADA systems monitor and control industrial processes."
+      },
+      {
+        "q": "The Indus Waters Treaty was signed between Pakistan and India in:",
+        "o": [
+          "1956",
+          "1960",
+          "1965",
+          "1972"
+        ],
+        "a": 1,
+        "e": "The Indus Waters Treaty was signed in September 1960."
+      },
+      {
+        "q": "What is the primary function of a compressor in a gas production facility?",
+        "o": [
+          "To reduce gas temperature only",
+          "To separate water from oil",
+          "To increase gas pressure",
+          "To measure liquid density"
+        ],
+        "a": 2,
+        "e": "Compressors increase gas pressure for processing, transportation or other operations."
+      },
+      {
+        "q": "Which is the highest mountain peak in Pakistan?",
+        "o": [
+          "K2",
+          "Nanga Parbat",
+          "Rakaposhi",
+          "Tirich Mir"
+        ],
+        "a": 0,
+        "e": "K2 is approximately 8,611 metres high and is the world's second-highest mountain."
+      },
+      {
+        "q": "What does LNG stand for?",
+        "o": [
+          "Low Nitrogen Gas",
+          "Liquid Neutral Gas",
+          "Light Natural Gas",
+          "Liquefied Natural Gas"
+        ],
+        "a": 3,
+        "e": "LNG is natural gas cooled into a liquid for storage and transportation."
+      },
+      {
+        "q": "Which international organization has its headquarters in Geneva, Switzerland?",
+        "o": [
+          "International Monetary Fund",
+          "World Health Organization",
+          "World Bank",
+          "OPEC"
+        ],
+        "a": 1,
+        "e": "The headquarters of WHO is located in Geneva."
+      },
+      {
+        "q": "What is the purpose of a blowout preventer (BOP) in oil and gas drilling?",
+        "o": [
+          "To measure oil density",
+          "To increase drilling speed",
+          "To control and prevent uncontrolled well flow",
+          "To separate crude oil"
+        ],
+        "a": 2,
+        "e": "A BOP is a critical well-control safety system."
+      },
+      {
+        "q": "Which desert is primarily located in southeastern Sindh?",
+        "o": [
+          "Thar Desert",
+          "Thal Desert",
+          "Kharan Desert",
+          "Cholistan Desert"
+        ],
+        "a": 0,
+        "e": "The Thar Desert extends across southeastern Sindh and northwestern India."
+      },
+      {
+        "q": "Which type of fire extinguisher is commonly suitable for energized electrical equipment?",
+        "o": [
+          "Water extinguisher",
+          "Ordinary water hose",
+          "Water-based cooling spray",
+          "Carbon dioxide extinguisher"
+        ],
+        "a": 3,
+        "e": "A suitable CO2 extinguisher is non-conductive and can be used on energized electrical equipment by trained personnel."
+      },
+      {
+        "q": "What does API stand for in the petroleum industry?",
+        "o": [
+          "Asian Petroleum Industry",
+          "American Petroleum Institute",
+          "Automatic Pressure Indicator",
+          "Advanced Petroleum Inspection"
+        ],
+        "a": 1,
+        "e": "The American Petroleum Institute develops standards for the oil and gas industry."
+      },
+      {
+        "q": "Which component of natural gas is primarily responsible for its fuel value in typical methane-rich natural gas?",
+        "o": [
+          "Carbon dioxide",
+          "Nitrogen",
+          "Methane",
+          "Water vapour"
+        ],
+        "a": 2,
+        "e": "Methane is combustible and is normally the main constituent of natural gas."
+      },
+      {
+        "q": "Which gas is commonly used for inerting industrial equipment?",
+        "o": [
+          "Nitrogen",
+          "Oxygen",
+          "Hydrogen",
+          "Acetylene"
+        ],
+        "a": 0,
+        "e": "Nitrogen is commonly used as an inert gas to reduce oxygen concentration in industrial systems."
+      },
+      {
+        "q": "What is the main purpose of a Permit to Work (PTW) system?",
+        "o": [
+          "To calculate workers' salaries",
+          "To increase production targets",
+          "To record employee attendance",
+          "To authorize and control potentially hazardous work"
+        ],
+        "a": 3,
+        "e": "A Permit to Work system ensures hazardous activities are formally authorized and appropriate safety controls are established."
+      }
+    ],
+    "createdAt": "2026-11-28T12:37:46.064Z",
+    "updatedAt": "2026-11-28T12:37:46.064Z"
   }
 ];
